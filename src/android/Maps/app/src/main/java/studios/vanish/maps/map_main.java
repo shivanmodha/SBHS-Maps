@@ -1,5 +1,6 @@
 package studios.vanish.maps;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -18,8 +19,11 @@ public class map_main extends AppCompatActivity implements NavigationView.OnNavi
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.map_content_toolbar);
         setSupportActionBar(toolbar);
+
+        AppBarLayout toolbar_container = (AppBarLayout)findViewById(R.id.map_content_toolbar_container);
+        toolbar_container.setPadding(0, GetStatusBarHeight(), 0, 0);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener()
@@ -27,8 +31,7 @@ public class map_main extends AppCompatActivity implements NavigationView.OnNavi
             @Override
             public void onClick(View view)
             {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -37,8 +40,18 @@ public class map_main extends AppCompatActivity implements NavigationView.OnNavi
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.map_content_navigation);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+    public int GetStatusBarHeight()
+    {
+        int _return = 0;
+        int id = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (id > 0)
+        {
+            _return =getResources().getDimensionPixelSize(id);
+        }
+        return _return;
     }
     public void onBackPressed()
     {
