@@ -1,5 +1,7 @@
 package studios.vanish.maps;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 public class map_main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -19,13 +22,15 @@ public class map_main extends AppCompatActivity implements NavigationView.OnNavi
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map_layout);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.map_content_toolbar);
-        setSupportActionBar(toolbar);
-
         AppBarLayout toolbar_container = (AppBarLayout)findViewById(R.id.map_content_toolbar_container);
-        toolbar_container.setPadding(0, GetStatusBarHeight(), 0, 0);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.map_content_navigation);
+
+
+        setSupportActionBar(toolbar);
         fab.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -34,13 +39,19 @@ public class map_main extends AppCompatActivity implements NavigationView.OnNavi
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.setStatusBarBackgroundColor(getResources().getColor(R.color.colorStatusBar));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        {
+            drawer.setStatusBarBackgroundColor(getResources().getColor(R.color.colorStatusBar));
+
+            ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams)toolbar_container.getLayoutParams();
+            lp.setMargins(8, GetStatusBarHeight() + 16, 8, 8);
+            toolbar_container.setLayoutParams(lp);
+            //toolbar_container.setPadding(0, GetStatusBarHeight(), 0, 0);
+        }
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.map_content_navigation);
         navigationView.setNavigationItemSelectedListener(this);
     }
     public int GetStatusBarHeight()

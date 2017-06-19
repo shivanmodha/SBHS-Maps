@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#b25552</color>
+    <color name="colorPrimaryDark">#4180b2</color>
+    <color name="colorAccent">#c8cc7d</color>
+    <color name="colorSecondary">#b25552</color>
+    <color name="colorVikings">#ffe700</color>
+    <color name="colorVikingsDark">#B2A312</color>
+    <color name="colorTitleBar">#a7a7a7</color>
+    <color name="colorStatusBar">#00000000</color>
 </resources>
