@@ -1,4 +1,5 @@
 package studios.vanish.maps;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -14,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 
 public class map_main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -29,6 +29,7 @@ public class map_main extends AppCompatActivity implements NavigationView.OnNavi
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.map_content_navigation);
 
+        setTitle("Maps");
 
         setSupportActionBar(toolbar);
         fab.setOnClickListener(new View.OnClickListener()
@@ -44,7 +45,7 @@ public class map_main extends AppCompatActivity implements NavigationView.OnNavi
             drawer.setStatusBarBackgroundColor(getResources().getColor(R.color.colorStatusBar));
 
             ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams)toolbar_container.getLayoutParams();
-            lp.setMargins(8, GetStatusBarHeight() + 16, 8, 8);
+            lp.setMargins(8, GetStatusBarHeight() + 32, 8, 8);
             toolbar_container.setLayoutParams(lp);
             //toolbar_container.setPadding(0, GetStatusBarHeight(), 0, 0);
         }
@@ -84,36 +85,21 @@ public class map_main extends AppCompatActivity implements NavigationView.OnNavi
     public boolean onOptionsItemSelected(MenuItem item)
     {
         int id = item.getItemId();
-        if (id == R.id.action_settings)
+        if (id == R.id.menu_settings)
         {
             return true;
         }
-
+        else if (id == R.id.menu_about)
+        {
+            Intent intent = new Intent(this, about_main.class);
+            startActivity(intent);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
     public boolean onNavigationItemSelected(MenuItem item)
     {
         int id = item.getItemId();
-        if (id == R.id.nav_camera)
-        {
-
-        }
-        else if (id == R.id.nav_gallery)
-        {
-
-        }
-        else if (id == R.id.nav_slideshow)
-        {
-
-        }
-        else if (id == R.id.nav_manage)
-        {
-
-        }
-        else if (id == R.id.nav_share)
-        {
-
-        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
