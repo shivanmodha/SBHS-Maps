@@ -1,4 +1,4 @@
-package studios.vanish.PathFinder;
+package studios.vanish.PathMapper;
 
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;

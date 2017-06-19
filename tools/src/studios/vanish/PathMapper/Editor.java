@@ -1,4 +1,4 @@
-package studios.vanish.PathFinder;
+package studios.vanish.PathMapper;
 import java.awt.Font;
 import java.io.File;
 import javax.swing.JFileChooser;
