@@ -87,6 +87,8 @@ public class map_main extends AppCompatActivity implements NavigationView.OnNavi
         int id = item.getItemId();
         if (id == R.id.menu_settings)
         {
+            Intent intent = new Intent(this, settings_main.class);
+            startActivity(intent);
             return true;
         }
         else if (id == R.id.menu_about)
