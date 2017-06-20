@@ -1,4 +1,4 @@
-package studios.vanish.PathMapper;
+package studios.vanish.Viewer;
 
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -25,6 +25,6 @@ public class Main
 	}
 	public Main()
 	{
-		new Editor();
+		new Viewer();
 	}
 }
