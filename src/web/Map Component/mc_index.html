@@ -6,9 +6,30 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="mc_style.css">
+        <script id="shader-vertex" type="shader/vertex">
+            attribute vec3 vertexPosition;
+            attribute vec4 vertexColor;
+            uniform mat4 uMVMatrix;
+            uniform mat4 uPMatrix;
+            varying vec4 vColor;
+            void main(void)
+            {
+                gl_Position = uPMatrix * uMVMatrix * vec4(vertexPosition, 1.0);
+                vColor = vertexColor;
+            }
+        </script>
+        <script id="shader-pixel" type="shader/pixel">
+            precision mediump float;
+            varying vec4 vColor;
+            void main(void)
+            {
+                gl_FragColor = vColor;
+            }
+        </script>
     </head>
-    <body onload="Initialize()">
+    <body onload="Main()">
         <canvas id="studios.vanish.mc"></canvas>
     </body>
+    <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
     <script src="mc_render.js"></script>
 </html>
