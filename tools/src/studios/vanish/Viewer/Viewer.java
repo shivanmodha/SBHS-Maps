@@ -525,13 +525,15 @@ public class Viewer
 								{
 									String str = Map.Get(j, i, k).FriendlyName.substring(3);
 									Font renderFont = new Font("Helvetica", Font.PLAIN, 10);
+									Size stringSize = Graphics.GetTextSize(str, renderFont);
 									if (Math.abs(Map.Get(j, i, k).object.Bound_Top_Left.X - Map.Get(j, i, k).object.Bound_Top_Right.X) < Math.abs(Map.Get(j, i, k).object.Bound_Top_Left.Y - Map.Get(j, i, k).object.Bound_Bottom_Left.Y))
 									{
 										AffineTransform rotateMatrix = new AffineTransform();
 										rotateMatrix.rotate(Math.PI / 2, 0, 0);
 										renderFont = renderFont.deriveFont(rotateMatrix);
+										stringSize = new Size(stringSize.Height, stringSize.Width);
 									}
-									Graphics.DrawString(str, Color.Black, midpoint, renderFont);
+									Graphics.DrawString(str, Color.Black, midpoint.subtract(stringSize.toPoint().divide(new Point(2, 2))), renderFont);
 								}
 							}
 						}
