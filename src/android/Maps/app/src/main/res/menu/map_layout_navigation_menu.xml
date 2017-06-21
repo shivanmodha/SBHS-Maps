@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_home"
+            android:icon="@drawable/ic_navigation_home"
+            android:title="Home"/>
+        <item
+            android:id="@+id/navigation_explore"
+            android:icon="@drawable/ic_navigation_explore"
+            android:title="Explore"/>
+    </group>
+    <item android:title="Quick Access">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/navigation_administration"
+                    android:icon="@drawable/ic_vikings"
+                    android:title="Administration"/>
+                <item
+                    android:id="@+id/navigation_cafeteria"
+                    android:icon="@drawable/ic_navigation_cafeteria"
+                    android:title="Cafeteria"/>
+                <item
+                    android:id="@+id/navigation_restrooms"
+                    android:icon="@drawable/ic_navigation_restrooms"
+                    android:title="Restrooms"/>
+                <item
+                    android:id="@+id/navigation_water"
+                    android:icon="@drawable/ic_navigation_water"
+                    android:title="Water Fountains"/>
+            </group>
+        </menu>
+    </item>
+    <item android:title="Navigate">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/navigation_find"
+                    android:icon="@drawable/ic_navigation_find"
+                    android:title="Find"/>
+                <item
+                    android:id="@+id/navigation_directions"
+                    android:icon="@drawable/ic_navigation_directions"
+                    android:title="Directions"/>
+                <item
+                    android:id="@+id/navigation_next"
+                    android:icon="@drawable/ic_navigation_next"
+                    android:title="Next Class"/>
+            </group>
+        </menu>
+    </item>
+    <item android:title="Me">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/navigation_profile"
+                    android:icon="@drawable/ic_navigation_profile"
+                    android:title="Profile"/>
+                <item
+                    android:id="@+id/navigation_schedule"
+                    android:icon="@drawable/ic_navigation_schedule"
+                    android:title="Schedule"/>
+                <item
+                    android:id="@+id/navigation_locker"
+                    android:icon="@drawable/ic_navigation_locker"
+                    android:title="Locker"/>
+            </group>
+        </menu>
+    </item>
+    <item android:title="Developer">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:title="Reload Dependency"/>
+        </menu>
+    </item>
+
+</menu>
