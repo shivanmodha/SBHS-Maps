@@ -1,11 +1,11 @@
 <!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Map Component</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="mc_style.css">
+        <link rel="stylesheet" type="text/css" href="/mc/mc_style.css">
         <script id="shader-vertex" type="shader/vertex">
             attribute vec3 vertexPosition;
             attribute vec4 vertexColor;
@@ -29,7 +29,9 @@
     </head>
     <body onload="Main()">
         <canvas id="studios.vanish.mc"></canvas>
+        <script src="/mc/glMatrix-0.9.5.min.js"></script>
+        <script src="/mc/webgl-utils.js"></script>
+        <script src="/mc/window.js"></script>
+        <script src="/mc/mc_render.js"></script>
     </body>
-    <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
-    <script src="mc_render.js"></script>
 </html>
