@@ -132,6 +132,15 @@ var Engine = class Engine
 }
 var Vertex = class Vertex
 {
+    constructor(x, y, z)
+    {
+        this.X = x;
+        this.Y = y;
+        this.Z = z;
+    }
+}
+var GraphicsVertex = class GraphicsVertex
+{
     constructor(x, y, z, r, g, b, a)
     {
         this.X = x;
@@ -152,7 +161,7 @@ var Index = class Index
 }
 var Object3D = class Object3D
 {
-    constructor(vert, inde, engine)
+    constructor(engine, vert, inde)
     {
         var device = engine.Device;
         /**
@@ -210,19 +219,29 @@ var Object3D = class Object3D
         this.IndexBuffer.numItems = indices.length;
 
         this.WorldMatrix = mat4.create();
+
+        this.Location = new Vertex(0, 0, 0);
+        this.Revolution = new Vertex(0, 0, 0);
+        this.RevolutionRadius = new Vertex(0, 0, 0);
+        this.Rotation = new Vertex(0, 0, 0);
+        this.Scale = new Vertex(1, 1, 1);
     }
-    Transform()
+    Update()
     {
         mat4.identity(this.WorldMatrix);
-        mat4.translate(this.WorldMatrix, [0, 0.0, -7.0]);
-        //mat4.translate(this.WorldMatrix, [0.0, 0.0, 0.0]); //LOCATION
-        //mat4.rotate(this.WorldMatrix, degToRad(45), [1, 0, 0]); //REVOLUTION
-        //mat4.translate(this.WorldMatrix, [0.0, 0.0, 2.0]); //REVOLUTION RADIUS
-        //mat4.rotate(this.WorldMatrix, degToRad(45), [0, 0, 1]); //ROTATION
-        //mat4.scale(this.WorldMatrix, [1, 1, 1]); //SCALE
+        mat4.translate(this.WorldMatrix, [this.Location.X, this.Location.Y, this.Location.Z]);
+        mat4.rotate(this.WorldMatrix, degToRad(this.Revolution.X), [1, 0, 0]);
+        mat4.rotate(this.WorldMatrix, degToRad(this.Revolution.Y), [0, 1, 0]);
+        mat4.rotate(this.WorldMatrix, degToRad(this.Revolution.Z), [0, 0, 1]);
+        mat4.translate(this.WorldMatrix, [this.RevolutionRadius.X, this.RevolutionRadius.Y, this.RevolutionRadius.Z]);
+        mat4.rotate(this.WorldMatrix, degToRad(this.Rotation.X), [1, 0, 0]);
+        mat4.rotate(this.WorldMatrix, degToRad(this.Rotation.Y), [0, 1, 0]);
+        mat4.rotate(this.WorldMatrix, degToRad(this.Rotation.Z), [0, 0, 1]);
+        mat4.scale(this.WorldMatrix, [this.Scale.X, this.Scale.Y, this.Scale.Z]);
     }
     Render(engine)
     {
+        this.Update();
         var Device = engine.Device;
         Device.bindBuffer(Device.ARRAY_BUFFER, this.VertexBuffer);
         Device.vertexAttribPointer(engine.Shader_Program.vertexPositionAttribute, this.VertexBuffer.itemSize, Device.FLOAT, false, 0, 0);
@@ -232,4 +251,8 @@ var Object3D = class Object3D
         engine.SetShaderWorlds(this.WorldMatrix);
         Device.drawElements(Device.TRIANGLES, this.IndexBuffer.numItems, Device.UNSIGNED_SHORT, 0);
     }
+}
+function degToRad(degrees)
+{
+    return degrees * Math.PI / 180;
 }
