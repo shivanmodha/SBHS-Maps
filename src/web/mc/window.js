@@ -10,10 +10,8 @@ var Engine = class Engine
         this.Device = this.RenderingCanvas.getContext('webgl');
         this.Device.viewportWidth = this.RenderingCanvas.width;
         this.Device.viewportHeight = this.RenderingCanvas.height;
-
         this.Shader_Vertex = this.LoadShaderFile("shader.MSV");
         this.Shader_Pixel = this.LoadShaderFile("shader.MSP");
-
         this.Shader_Program = this.Device.createProgram();
         this.Device.attachShader(this.Shader_Program, this.Shader_Vertex);
         this.Device.attachShader(this.Shader_Program, this.Shader_Pixel);
@@ -29,15 +27,13 @@ var Engine = class Engine
         this.Device.enableVertexAttribArray(this.Shader_Program.vertexColorAttribute);
         this.Shader_Program.pMatrixUniform = this.Device.getUniformLocation(this.Shader_Program, "uPMatrix");
         this.Shader_Program.mvMatrixUniform = this.Device.getUniformLocation(this.Shader_Program, "uMVMatrix");
-        
         this.Device.clearColor(0.0, 0.0, 0.0, 1.0);
         this.Device.enable(this.Device.DEPTH_TEST);
-
         this.mvMatrix = mat4.create();
-        this.pMatrix = mat4.create();
-
+        this.PerspectiveMatrix = mat4.create();
+        
         //DELHERE
-        this.triangleVertexPositionBuffer = this.Device.createBuffer();
+        /*this.triangleVertexPositionBuffer = this.Device.createBuffer();
         this.Device.bindBuffer(this.Device.ARRAY_BUFFER, this.triangleVertexPositionBuffer);
         var vertices = 
         [
@@ -72,12 +68,23 @@ var Engine = class Engine
         this.Device.bindBuffer(this.Device.ARRAY_BUFFER, this.triangleVertexColorBuffer);
         this.Device.vertexAttribPointer(this.Shader_Program.vertexColorAttribute, this.triangleVertexColorBuffer.itemSize, this.Device.FLOAT, false, 0, 0);
         this.setMatrixUniforms();
-        this.Device.drawArrays(this.Device.LINE_LOOP, 0, this.triangleVertexPositionBuffer.numItems);
+        this.Device.drawArrays(this.Device.LINE_LOOP, 0, this.triangleVertexPositionBuffer.numItems);*/
     }
-    setMatrixUniforms()
+    Clear(r, g, b, a)
     {
-        this.Device.uniformMatrix4fv(this.Shader_Program.pMatrixUniform, false, this.pMatrix);
-        this.Device.uniformMatrix4fv(this.Shader_Program.mvMatrixUniform, false, this.mvMatrix);
+        this.Device.clearColor(r, g, b, a);
+        this.Device.viewport(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
+        this.Device.clear(this.Device.COLOR_BUFFER_BIT | this.Device.DEPTH_BUFFER_BIT);
+        mat4.perspective(45, this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 100.0, this.PerspectiveMatrix);
+    }
+    SetShaderWorlds(WorldMatrix)
+    {
+        this.Device.uniformMatrix4fv(this.Shader_Program.pMatrixUniform, false, this.PerspectiveMatrix);
+        this.Device.uniformMatrix4fv(this.Shader_Program.mvMatrixUniform, false, WorldMatrix);
+    }
+    GetDevice()
+    {
+        return this.Device;
     }
     /**
      * Reads a shader file and loads it into a shader object for later use
@@ -121,5 +128,108 @@ var Engine = class Engine
             return null;
         }
         return shader;
+    }
+}
+var Vertex = class Vertex
+{
+    constructor(x, y, z, r, g, b, a)
+    {
+        this.X = x;
+        this.Y = y;
+        this.Z = z;
+        this.R = r;
+        this.G = g;
+        this.B = b;
+        this.A = a;
+    }
+}
+var Index = class Index
+{
+    constructor(i1, i2, i3)
+    {
+        this.Indices = [i1, i2, i3];
+    }
+}
+var Object3D = class Object3D
+{
+    constructor(vert, inde, engine)
+    {
+        var device = engine.Device;
+        /**
+         * Transpose the vertex objects to arrays
+         */
+        var vertices = new Array(vert.length * 3);
+        var colors = new Array(vert.length * 4);
+        var indices = new Array(inde.length * 3);
+        var vertexLocation = 0;
+        var colorLocation = 0;
+        for (var i = 0; i < vert.length; i++)
+        {
+            vertices[vertexLocation + 0] = vert[i].X;
+            vertices[vertexLocation + 1] = vert[i].Y;
+            vertices[vertexLocation + 2] = vert[i].Z;
+            vertexLocation = vertexLocation + 3
+            
+            colors[colorLocation + 0] = vert[i].R;
+            colors[colorLocation + 1] = vert[i].G;
+            colors[colorLocation + 2] = vert[i].B;
+            colors[colorLocation + 3] = vert[i].A;
+            colorLocation = colorLocation + 4;
+        }
+        var indexLocation = 0;
+        for (var i = 0; i < inde.length; i++)
+        {
+            indices[indexLocation + 0] = inde[i].Indices[0];
+            indices[indexLocation + 1] = inde[i].Indices[1];
+            indices[indexLocation + 2] = inde[i].Indices[2];
+            indexLocation = indexLocation + 3;
+        }
+        /**
+         * Creating the VertexBuffer
+         */
+        this.VertexBuffer = device.createBuffer();
+        device.bindBuffer(device.ARRAY_BUFFER, this.VertexBuffer);
+        device.bufferData(device.ARRAY_BUFFER, new Float32Array(vertices), device.STATIC_DRAW);
+        this.VertexBuffer.itemSize = 3;
+        this.VertexBuffer.numItems = vert.length;
+        /**
+         * Creating the ColorBuffer
+         */
+        this.ColorBuffer = device.createBuffer();
+        device.bindBuffer(device.ARRAY_BUFFER, this.ColorBuffer);
+        device.bufferData(device.ARRAY_BUFFER, new Float32Array(colors), device.STATIC_DRAW);
+        this.ColorBuffer.itemSize = 4;
+        this.ColorBuffer.numItems = vert.length;
+        /**
+         * Creating the IndexBuffer
+         */
+        this.IndexBuffer = device.createBuffer();
+        device.bindBuffer(device.ELEMENT_ARRAY_BUFFER, this.IndexBuffer);
+        device.bufferData(device.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), device.STATIC_DRAW);
+        this.IndexBuffer.itemSize = 1;
+        this.IndexBuffer.numItems = indices.length;
+
+        this.WorldMatrix = mat4.create();
+    }
+    Transform()
+    {
+        mat4.identity(this.WorldMatrix);
+        mat4.translate(this.WorldMatrix, [0, 0.0, -7.0]);
+        //mat4.translate(this.WorldMatrix, [0.0, 0.0, 0.0]); //LOCATION
+        //mat4.rotate(this.WorldMatrix, degToRad(45), [1, 0, 0]); //REVOLUTION
+        //mat4.translate(this.WorldMatrix, [0.0, 0.0, 2.0]); //REVOLUTION RADIUS
+        //mat4.rotate(this.WorldMatrix, degToRad(45), [0, 0, 1]); //ROTATION
+        //mat4.scale(this.WorldMatrix, [1, 1, 1]); //SCALE
+    }
+    Render(engine)
+    {
+        var Device = engine.Device;
+        Device.bindBuffer(Device.ARRAY_BUFFER, this.VertexBuffer);
+        Device.vertexAttribPointer(engine.Shader_Program.vertexPositionAttribute, this.VertexBuffer.itemSize, Device.FLOAT, false, 0, 0);
+        Device.bindBuffer(Device.ARRAY_BUFFER, this.ColorBuffer);
+        Device.vertexAttribPointer(engine.Shader_Program.vertexColorAttribute, this.ColorBuffer.itemSize, Device.FLOAT, false, 0, 0);
+        Device.bindBuffer(Device.ELEMENT_ARRAY_BUFFER, this.IndexBuffer);
+        engine.SetShaderWorlds(this.WorldMatrix);
+        Device.drawElements(Device.TRIANGLES, this.IndexBuffer.numItems, Device.UNSIGNED_SHORT, 0);
     }
 }

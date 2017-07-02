@@ -12,6 +12,9 @@ var squareVertexIndexBuffer;
 var rTri = 0;
 var rSquare = 0;
 var lastTime = 0;
+var r = 0.0;
+var ME;
+var obj;
 function mvPushMatrix()
 {
     var copy = mat4.create();
@@ -28,8 +31,19 @@ function Main()
     canvas.width = document.body.clientWidth;
     canvas.height = window.innerHeight - 5;
 
-    var E = new Engine(canvas);
-
+    ME = new Engine(canvas);
+    var Vertices = 
+    [
+        new Vertex(+0.0, +1.0, +0.0, 1.0, 1.0, 1.0, 1.0),
+        new Vertex(-1.0, -1.0, +0.0, 1.0, 1.0, 1.0, 1.0),
+        new Vertex(+1.0, -1.0, +0.0, 1.0, 1.0, 1.0, 1.0),
+    ];
+    var Indices = 
+    [
+        new Index(0, 1, 2)
+    ];
+    obj = new Object3D(Vertices, Indices, ME);
+    RenderingLoop();
     /*Initialize_GL();
     Initialize_Shaders();
     Initialize_Buffers();
@@ -37,6 +51,14 @@ function Main()
     gl.enable(gl.DEPTH_TEST);
     Loop();
     Render();*/
+}
+function RenderingLoop()
+{
+    requestAnimFrame(RenderingLoop);
+    ME.Clear(r, 0, 0, 1);
+    r = r + 0.01;
+    obj.Transform();
+    obj.Render(ME);
 }
 function Initialize_GL()
 {
