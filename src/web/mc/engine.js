@@ -1,3 +1,20 @@
+var Vertex = class Vertex
+{
+    constructor(x, y, z)
+    {
+        this.X = x;
+        this.Y = y;
+        this.Z = z;
+    }
+}
+var Camera = class Camera
+{
+    constructor(location, rotation)
+    {
+        this.Location = location;
+        this.Rotation = rotation;
+    }
+}
 var Engine = class Engine
 {
     /**
@@ -31,44 +48,8 @@ var Engine = class Engine
         this.Device.enable(this.Device.DEPTH_TEST);
         this.mvMatrix = mat4.create();
         this.PerspectiveMatrix = mat4.create();
-        
-        //DELHERE
-        /*this.triangleVertexPositionBuffer = this.Device.createBuffer();
-        this.Device.bindBuffer(this.Device.ARRAY_BUFFER, this.triangleVertexPositionBuffer);
-        var vertices = 
-        [
-            +0.0, +1.0, +0.0,
-            -1.0, -1.0, +0.0,
-            +1.0, -1.0, +0.0
-        ];
-        this.Device.bufferData(this.Device.ARRAY_BUFFER, new Float32Array(vertices), this.Device.STATIC_DRAW);
-        this.triangleVertexPositionBuffer.itemSize = 3;
-        this.triangleVertexPositionBuffer.numItems = 3;
 
-        this.triangleVertexColorBuffer = this.Device.createBuffer();
-        this.Device.bindBuffer(this.Device.ARRAY_BUFFER, this.triangleVertexColorBuffer);
-        var colors = 
-        [
-            1.0, 0.0, 0.0, 1.0,
-            0.0, 1.0, 0.0, 1.0,
-            0.0, 0.0, 1.0, 1.0
-        ];
-        this.Device.bufferData(this.Device.ARRAY_BUFFER, new Float32Array(colors), this.Device.STATIC_DRAW);
-        this.triangleVertexColorBuffer.itemSize = 4;
-        this.triangleVertexColorBuffer.numItems = 3;
-        //RENDERING
-        this.Device.viewport(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
-        this.Device.clear(this.Device.COLOR_BUFFER_BIT | this.Device.DEPTH_BUFFER_BIT);
-
-        mat4.perspective(45, this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 100.0, this.pMatrix);
-        mat4.identity(this.mvMatrix);
-        mat4.translate(this.mvMatrix, [0, 0.0, -7.0]);
-        this.Device.bindBuffer(this.Device.ARRAY_BUFFER, this.triangleVertexPositionBuffer);
-        this.Device.vertexAttribPointer(this.Shader_Program.vertexPositionAttribute, this.triangleVertexPositionBuffer.itemSize, this.Device.FLOAT, false, 0, 0);
-        this.Device.bindBuffer(this.Device.ARRAY_BUFFER, this.triangleVertexColorBuffer);
-        this.Device.vertexAttribPointer(this.Shader_Program.vertexColorAttribute, this.triangleVertexColorBuffer.itemSize, this.Device.FLOAT, false, 0, 0);
-        this.setMatrixUniforms();
-        this.Device.drawArrays(this.Device.LINE_LOOP, 0, this.triangleVertexPositionBuffer.numItems);*/
+        this.Camera = new Camera(new Vertex(0, 0, 0), new Vertex(0, 0, 0))
     }
     Clear(r, g, b, a)
     {
@@ -128,15 +109,6 @@ var Engine = class Engine
             return null;
         }
         return shader;
-    }
-}
-var Vertex = class Vertex
-{
-    constructor(x, y, z)
-    {
-        this.X = x;
-        this.Y = y;
-        this.Z = z;
     }
 }
 var GraphicsVertex = class GraphicsVertex
@@ -225,11 +197,17 @@ var Object3D = class Object3D
         this.RevolutionRadius = new Vertex(0, 0, 0);
         this.Rotation = new Vertex(0, 0, 0);
         this.Scale = new Vertex(1, 1, 1);
+
+        this.RenderMode = "Solid";
     }
-    Update()
+    Update(engine)
     {
         mat4.identity(this.WorldMatrix);
-        mat4.translate(this.WorldMatrix, [this.Location.X, this.Location.Y, this.Location.Z]);
+        mat4.rotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.X), [1, 0, 0]);
+        mat4.rotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.Y), [0, 1, 0]);
+        mat4.rotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.Z), [0, 0, 1]);
+        mat4.translate(this.WorldMatrix, [this.Location.X - engine.Camera.Location.X, this.Location.Y - engine.Camera.Location.Y, this.Location.Z - engine.Camera.Location.Z]);
+        //mat4.translate(this.WorldMatrix, [this.Location.X, this.Location.Y, this.Location.Z]);
         mat4.rotate(this.WorldMatrix, degToRad(this.Revolution.X), [1, 0, 0]);
         mat4.rotate(this.WorldMatrix, degToRad(this.Revolution.Y), [0, 1, 0]);
         mat4.rotate(this.WorldMatrix, degToRad(this.Revolution.Z), [0, 0, 1]);
@@ -241,7 +219,7 @@ var Object3D = class Object3D
     }
     Render(engine)
     {
-        this.Update();
+        this.Update(engine);
         var Device = engine.Device;
         Device.bindBuffer(Device.ARRAY_BUFFER, this.VertexBuffer);
         Device.vertexAttribPointer(engine.Shader_Program.vertexPositionAttribute, this.VertexBuffer.itemSize, Device.FLOAT, false, 0, 0);
@@ -249,7 +227,12 @@ var Object3D = class Object3D
         Device.vertexAttribPointer(engine.Shader_Program.vertexColorAttribute, this.ColorBuffer.itemSize, Device.FLOAT, false, 0, 0);
         Device.bindBuffer(Device.ELEMENT_ARRAY_BUFFER, this.IndexBuffer);
         engine.SetShaderWorlds(this.WorldMatrix);
-        Device.drawElements(Device.TRIANGLES, this.IndexBuffer.numItems, Device.UNSIGNED_SHORT, 0);
+        var mode = Device.TRIANGLES;
+        if (this.RenderMode === "WireFrame")
+        {
+            mode = Device.LINE_STRIP;
+        }
+        Device.drawElements(mode, this.IndexBuffer.numItems, Device.UNSIGNED_SHORT, 0);
     }
 }
 function degToRad(degrees)
