@@ -1,3 +1,11 @@
+var Point = class Point
+{
+    constructor(x, y)
+    {
+        this.X = x;
+        this.Y = y;
+    }
+}
 var Vertex = class Vertex
 {
     constructor(x, y, z)
@@ -56,7 +64,7 @@ var Engine = class Engine
         this.Device.clearColor(r, g, b, a);
         this.Device.viewport(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
         this.Device.clear(this.Device.COLOR_BUFFER_BIT | this.Device.DEPTH_BUFFER_BIT);
-        mat4.perspective(45, this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 100.0, this.PerspectiveMatrix);
+        mat4.perspective(45, this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000.0, this.PerspectiveMatrix);
     }
     SetShaderWorlds(WorldMatrix)
     {
@@ -230,7 +238,11 @@ var Object3D = class Object3D
         var mode = Device.TRIANGLES;
         if (this.RenderMode === "WireFrame")
         {
-            mode = Device.LINE_STRIP;
+            mode = Device.LINE_LOOP;
+        }
+        else if (this.RenderMode === "Lines")
+        {
+            mode = Device.LINES;
         }
         Device.drawElements(mode, this.IndexBuffer.numItems, Device.UNSIGNED_SHORT, 0);
     }
