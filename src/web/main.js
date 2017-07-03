@@ -19,6 +19,7 @@ var server = http.createServer(function (request, response)
                                 '.js' : 'text/javascript',
                                 '.MSV' : 'text/plain',
                                 '.MSP' : 'text/plain',
+                                '.ngm' : 'text/javascript'
                                 }[ request.url.substr(offset) ];
             response.setHeader('Content-type' , doctype);
             response.end(data);
