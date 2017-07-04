@@ -33,8 +33,11 @@ var Engine = class Engine
     {
         this.RenderingCanvas = canvas;
         this.Device = this.RenderingCanvas.getContext('webgl');
-        this.Device.viewportWidth = this.RenderingCanvas.width;
-        this.Device.viewportHeight = this.RenderingCanvas.height;
+        var style = window.getComputedStyle(canvas);
+        this.RenderingCanvas.width = parseInt(style.width);
+        this.RenderingCanvas.height = parseInt(style.height);
+        this.Device.viewportWidth =  canvas.width;
+        this.Device.viewportHeight = canvas.height;
         this.Shader_Vertex = this.LoadShaderFile("shader.MSV");
         this.Shader_Pixel = this.LoadShaderFile("shader.MSP");
         this.Shader_Program = this.Device.createProgram();
@@ -56,7 +59,7 @@ var Engine = class Engine
         this.Device.enable(this.Device.DEPTH_TEST);
         this.mvMatrix = mat4.create();
         this.PerspectiveMatrix = mat4.create();
-
+        this.ViewProjectionMatrix = mat4.create();
         this.Camera = new Camera(new Vertex(0, 0, 0), new Vertex(0, 0, 0))
     }
     Clear(r, g, b, a)
@@ -64,6 +67,12 @@ var Engine = class Engine
         this.Device.clearColor(r, g, b, a);
         this.Device.viewport(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
         this.Device.clear(this.Device.COLOR_BUFFER_BIT | this.Device.DEPTH_BUFFER_BIT);
+
+        mat4.identity(this.ViewProjectionMatrix);
+        mat4.rotate(this.ViewProjectionMatrix, degToRad(this.Camera.Rotation.X), [1, 0, 0]);
+        mat4.rotate(this.ViewProjectionMatrix, degToRad(this.Camera.Rotation.Y), [0, 1, 0]);
+        mat4.rotate(this.ViewProjectionMatrix, degToRad(this.Camera.Rotation.Z), [0, 0, 1]);
+
         mat4.perspective(45, this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000.0, this.PerspectiveMatrix);
     }
     SetShaderWorlds(WorldMatrix)

@@ -7,16 +7,16 @@ var DeltaMouse = new Point(0, 0);
 var PreviousMousePosition = new Point(0, 0);
 function Main()
 {
-    var RenderingCanvas = document.getElementById("studios.vanish.mc.3D");
-    RenderingCanvas.addEventListener("mousedown", Event_Down);
-    RenderingCanvas.addEventListener("mouseup", Event_Up);
-    RenderingCanvas.addEventListener("mousemove", Event_Move);
-    RenderingCanvas.addEventListener("mouseover", Event_Move);
-    RenderingCanvas.addEventListener("mousewheel", Event_Wheel);
-    RenderingCanvas.addEventListener("DOMMouseScroll", Event_Wheel);
-    RenderingCanvas.width = document.body.clientWidth;
-    RenderingCanvas.height = window.innerHeight - 5;
-    ME = new Engine(RenderingCanvas);
+    window.addEventListener("mousedown", Event_Down);
+    window.addEventListener("mouseup", Event_Up);
+    window.addEventListener("mousemove", Event_Move);
+    window.addEventListener("mouseover", Event_Move);
+    window.addEventListener("mousewheel", Event_Wheel);
+    window.addEventListener("DOMMouseScroll", Event_Wheel);
+
+    var RC3 = document.getElementById("studios.vanish.mc.3D");
+    ME = new Engine(RC3);
+
     Initialize();
     MainLoop();
 }
@@ -44,80 +44,122 @@ function Initialize()
     for (var i = 0; i < JSONObject.nodes.length; i++)
     {
         var s = 0;
+        var ds = 0;
         var a = 1;
         var type = "U";
         if (JSONObject.nodes[i].object.type == "WastedSpace")
         {
+            ds = 0.8745;
             s = 0.8745;
             type = "W";
         }
         else if (JSONObject.nodes[i].object.type == "Building")
         {
+            ds = 0.784;
             s = 0.968;
             type = "B";
         }
         else if (JSONObject.nodes[i].object.type == "Path")
         {
+            ds = 1;
             s = 1;
             type = "P";
         }
+        var offset = 0.01;
+        var height = 0.5;
         var vertices = 
         [
-            new GraphicsVertex(JSONObject.nodes[i].object.BL.x, JSONObject.nodes[i].object.BL.y, JSONObject.nodes[i].object.BL.z, s, s, s, a),
-            new GraphicsVertex(JSONObject.nodes[i].object.TL.x, JSONObject.nodes[i].object.TL.y, JSONObject.nodes[i].object.TL.z, s, s, s, a),
-            new GraphicsVertex(JSONObject.nodes[i].object.TR.x, JSONObject.nodes[i].object.TR.y, JSONObject.nodes[i].object.TR.z, s, s, s, a),
-            new GraphicsVertex(JSONObject.nodes[i].object.BR.x, JSONObject.nodes[i].object.BR.y, JSONObject.nodes[i].object.BR.z, s, s, s, a),
+            new GraphicsVertex(JSONObject.nodes[i].object.BL.x, JSONObject.nodes[i].object.BL.y, JSONObject.nodes[i].object.BL.z, ds, ds, ds, a),
+            new GraphicsVertex(JSONObject.nodes[i].object.TL.x, JSONObject.nodes[i].object.TL.y, JSONObject.nodes[i].object.TL.z, ds, ds, ds, a),
+            new GraphicsVertex(JSONObject.nodes[i].object.TR.x, JSONObject.nodes[i].object.TR.y, JSONObject.nodes[i].object.TR.z, ds, ds, ds, a),
+            new GraphicsVertex(JSONObject.nodes[i].object.BR.x, JSONObject.nodes[i].object.BR.y, JSONObject.nodes[i].object.BR.z, ds, ds, ds, a),
         ];
         var indices = 
         [
             new Index(0, 1, 2),
             new Index(0, 2, 3)
         ];
+        if (type == "B")
+        {            
+            vertices = 
+            [
+                /**
+                 * BOTTOM
+                 */
+                new GraphicsVertex(JSONObject.nodes[i].object.BL.x, JSONObject.nodes[i].object.BL.y, JSONObject.nodes[i].object.BL.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TL.x, JSONObject.nodes[i].object.TL.y, JSONObject.nodes[i].object.TL.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TR.x, JSONObject.nodes[i].object.TR.y, JSONObject.nodes[i].object.TR.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.BR.x, JSONObject.nodes[i].object.BR.y, JSONObject.nodes[i].object.BR.z, ds, ds, ds, a),
+                /**
+                 * TOP
+                 */
+                new GraphicsVertex(JSONObject.nodes[i].object.BL.x + offset, JSONObject.nodes[i].object.BL.y + offset, JSONObject.nodes[i].object.BL.z + height, s, s, s, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TL.x + offset, JSONObject.nodes[i].object.TL.y - offset, JSONObject.nodes[i].object.TL.z + height, s, s, s, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TR.x - offset, JSONObject.nodes[i].object.TR.y - offset, JSONObject.nodes[i].object.TR.z + height, s, s, s, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.BR.x - offset, JSONObject.nodes[i].object.BR.y + offset, JSONObject.nodes[i].object.BR.z + height, s, s, s, a),
+                /**
+                 * LEFT
+                 */
+                new GraphicsVertex(JSONObject.nodes[i].object.BL.x, JSONObject.nodes[i].object.BL.y, JSONObject.nodes[i].object.BL.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TL.x, JSONObject.nodes[i].object.TL.y, JSONObject.nodes[i].object.TL.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TL.x + offset, JSONObject.nodes[i].object.TL.y - offset, JSONObject.nodes[i].object.TL.z + height, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.BL.x + offset, JSONObject.nodes[i].object.BL.y + offset, JSONObject.nodes[i].object.BL.z + height, ds, ds, ds, a),
+                /**
+                 * RIGHT
+                 */
+                new GraphicsVertex(JSONObject.nodes[i].object.BR.x, JSONObject.nodes[i].object.BR.y, JSONObject.nodes[i].object.BR.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TR.x, JSONObject.nodes[i].object.TR.y, JSONObject.nodes[i].object.TR.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TR.x - offset, JSONObject.nodes[i].object.TR.y - offset, JSONObject.nodes[i].object.TR.z + height, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.BR.x - offset, JSONObject.nodes[i].object.BR.y + offset, JSONObject.nodes[i].object.BR.z + height, ds, ds, ds, a),
+                /**
+                 * FRONT
+                 */
+                new GraphicsVertex(JSONObject.nodes[i].object.BL.x, JSONObject.nodes[i].object.BL.y, JSONObject.nodes[i].object.BL.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.BR.x, JSONObject.nodes[i].object.BR.y, JSONObject.nodes[i].object.BR.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.BR.x - offset, JSONObject.nodes[i].object.BR.y + offset, JSONObject.nodes[i].object.BR.z + height, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.BL.x + offset, JSONObject.nodes[i].object.BL.y + offset, JSONObject.nodes[i].object.BL.z + height, ds, ds, ds, a),
+                /**
+                 * BACK
+                 */                
+                new GraphicsVertex(JSONObject.nodes[i].object.TL.x, JSONObject.nodes[i].object.TL.y, JSONObject.nodes[i].object.TL.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TR.x, JSONObject.nodes[i].object.TR.y, JSONObject.nodes[i].object.TR.z, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TR.x - offset, JSONObject.nodes[i].object.TR.y - offset, JSONObject.nodes[i].object.TR.z + height, ds, ds, ds, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TL.x + offset, JSONObject.nodes[i].object.TL.y - offset, JSONObject.nodes[i].object.TL.z + height, ds, ds, ds, a),
+            ];
+            indices = 
+            [
+                //new Index(0, 1, 2),
+                //new Index(0, 2, 3),
+
+                new Index(4, 5, 6),
+                new Index(4, 6, 7),
+
+                new Index(8, 9, 10),
+                new Index(8, 10, 11),
+                
+                new Index(12, 13, 14),
+                new Index(12, 14, 15),
+                
+                new Index(16, 17, 18),
+                new Index(16, 18, 19),
+                
+                new Index(20, 21, 22),
+                new Index(20, 22, 23),
+            ];
+        }
         if (vertices[0].Z === vertices[1].Z && vertices[1].Z === vertices[2].Z && vertices[2].Z === vertices[3].Z)
         {
             if (vertices[0].Z != -1)
             {
                 var floor = vertices[0].Z;
                 Map[floor].push(new Object3D(ME, vertices, indices));
-                if (type === "B")
-                {
-                    for (var j = 0; j < vertices.length; j++)
-                    {
-                        vertices[j].Z += 0.01;
-                        vertices[j].R = 0.784;
-                        vertices[j].G = 0.784;
-                        vertices[j].B = 0.784;
-                    }
-                    var v = 
-                    [
-                        vertices[0],
-                        vertices[1],
-                        vertices[1],
-                        vertices[2],
-                        vertices[2],
-                        vertices[3],
-                        vertices[3],
-                        vertices[0],
-                    ];
-                    var k = 
-                    [
-                        new Index(0, 1, 2),
-                        new Index(1, 2, 3),
-                        new Index(2, 3, 4),
-                        new Index(3, 4, 5),
-                        new Index(6, 7, 0),
-                        new Index(7, 0, 1),
-                    ];
-                    Map[floor].push(new Object3D(ME, v, k));
-                    Map[floor][Map[floor].length - 1].RenderMode = "Lines";
-                }
             }
         }
     }
     ME.Camera.Location.X = 50;
     ME.Camera.Location.Y = 50;
     ME.Camera.Location.Z = 200;
-    //ME.Camera.Rotation.X = -60;
+    //ME.Camera.Rotation.X = -10;
 }
 function Event_Down(event)
 {
