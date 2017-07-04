@@ -15,7 +15,8 @@ function Main()
     window.addEventListener("DOMMouseScroll", Event_Wheel);
 
     var RC3 = document.getElementById("studios.vanish.mc.3D");
-    ME = new Engine(RC3);
+    var RC2 = document.getElementById("studios.vanish.mc.2D");
+    ME = new Engine(RC2, RC3);
 
     Initialize();
     MainLoop();
@@ -159,7 +160,7 @@ function Initialize()
     ME.Camera.Location.X = 50;
     ME.Camera.Location.Y = 50;
     ME.Camera.Location.Z = 200;
-    //ME.Camera.Rotation.X = -10;
+    //ME.Camera.Rotation.X = -45;
 }
 function Event_Down(event)
 {
@@ -202,5 +203,9 @@ function Render()
     for (var i = 0; i < Map[RenderedFloor].length; i++)
     {
         Map[RenderedFloor][i].Render(ME);
+        var m = Map[RenderedFloor][i].WorldMatrix;
+        //mat4.translate(m, [Location.X, Location.Y, Location.Z]);
+
+        ME.Device2D.fillText("Testing", m[12] + 100, m[13] * -1 + 100);
     }
 }

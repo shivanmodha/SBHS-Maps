@@ -29,11 +29,14 @@ var Engine = class Engine
      * Creates and initializes a new rendering window for OpenGL
      * @param {Element} canvas 
      */
-    constructor(canvas)
+    constructor(canvas2D, canvas)
     {
         this.RenderingCanvas = canvas;
         this.Device = this.RenderingCanvas.getContext('webgl');
+        this.Device2D = canvas2D.getContext('2d');
         var style = window.getComputedStyle(canvas);
+        canvas2D.width = parseInt(style.width);
+        canvas2D.height = parseInt(style.height);
         this.RenderingCanvas.width = parseInt(style.width);
         this.RenderingCanvas.height = parseInt(style.height);
         this.Device.viewportWidth =  canvas.width;
@@ -67,6 +70,8 @@ var Engine = class Engine
         this.Device.clearColor(r, g, b, a);
         this.Device.viewport(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
         this.Device.clear(this.Device.COLOR_BUFFER_BIT | this.Device.DEPTH_BUFFER_BIT);
+
+        this.Device2D.clearRect(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
 
         mat4.identity(this.ViewProjectionMatrix);
         mat4.rotate(this.ViewProjectionMatrix, degToRad(this.Camera.Rotation.X), [1, 0, 0]);
@@ -145,7 +150,7 @@ var Index = class Index
 {
     constructor(i1, i2, i3)
     {
-        this.Indices = [i1, i2, i3];
+        this.indices = [i1, i2, i3];
     }
 }
 var Object3D = class Object3D
@@ -156,30 +161,30 @@ var Object3D = class Object3D
         /**
          * Transpose the vertex objects to arrays
          */
-        var vertices = new Array(vert.length * 3);
-        var colors = new Array(vert.length * 4);
-        var indices = new Array(inde.length * 3);
+        this.vertices = new Array(vert.length * 3);
+        this.colors = new Array(vert.length * 4);
+        this.indices = new Array(inde.length * 3);
         var vertexLocation = 0;
         var colorLocation = 0;
         for (var i = 0; i < vert.length; i++)
         {
-            vertices[vertexLocation + 0] = vert[i].X;
-            vertices[vertexLocation + 1] = vert[i].Y;
-            vertices[vertexLocation + 2] = vert[i].Z;
+            this.vertices[vertexLocation + 0] = vert[i].X;
+            this.vertices[vertexLocation + 1] = vert[i].Y;
+            this.vertices[vertexLocation + 2] = vert[i].Z;
             vertexLocation = vertexLocation + 3
             
-            colors[colorLocation + 0] = vert[i].R;
-            colors[colorLocation + 1] = vert[i].G;
-            colors[colorLocation + 2] = vert[i].B;
-            colors[colorLocation + 3] = vert[i].A;
+            this.colors[colorLocation + 0] = vert[i].R;
+            this.colors[colorLocation + 1] = vert[i].G;
+            this.colors[colorLocation + 2] = vert[i].B;
+            this.colors[colorLocation + 3] = vert[i].A;
             colorLocation = colorLocation + 4;
         }
         var indexLocation = 0;
         for (var i = 0; i < inde.length; i++)
         {
-            indices[indexLocation + 0] = inde[i].Indices[0];
-            indices[indexLocation + 1] = inde[i].Indices[1];
-            indices[indexLocation + 2] = inde[i].Indices[2];
+            this.indices[indexLocation + 0] = inde[i].indices[0];
+            this.indices[indexLocation + 1] = inde[i].indices[1];
+            this.indices[indexLocation + 2] = inde[i].indices[2];
             indexLocation = indexLocation + 3;
         }
         /**
@@ -187,7 +192,7 @@ var Object3D = class Object3D
          */
         this.VertexBuffer = device.createBuffer();
         device.bindBuffer(device.ARRAY_BUFFER, this.VertexBuffer);
-        device.bufferData(device.ARRAY_BUFFER, new Float32Array(vertices), device.STATIC_DRAW);
+        device.bufferData(device.ARRAY_BUFFER, new Float32Array(this.vertices), device.STATIC_DRAW);
         this.VertexBuffer.itemSize = 3;
         this.VertexBuffer.numItems = vert.length;
         /**
@@ -195,7 +200,7 @@ var Object3D = class Object3D
          */
         this.ColorBuffer = device.createBuffer();
         device.bindBuffer(device.ARRAY_BUFFER, this.ColorBuffer);
-        device.bufferData(device.ARRAY_BUFFER, new Float32Array(colors), device.STATIC_DRAW);
+        device.bufferData(device.ARRAY_BUFFER, new Float32Array(this.colors), device.STATIC_DRAW);
         this.ColorBuffer.itemSize = 4;
         this.ColorBuffer.numItems = vert.length;
         /**
@@ -203,9 +208,9 @@ var Object3D = class Object3D
          */
         this.IndexBuffer = device.createBuffer();
         device.bindBuffer(device.ELEMENT_ARRAY_BUFFER, this.IndexBuffer);
-        device.bufferData(device.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), device.STATIC_DRAW);
+        device.bufferData(device.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), device.STATIC_DRAW);
         this.IndexBuffer.itemSize = 1;
-        this.IndexBuffer.numItems = indices.length;
+        this.IndexBuffer.numItems = this.indices.length;
 
         this.WorldMatrix = mat4.create();
 
