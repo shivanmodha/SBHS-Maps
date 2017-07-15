@@ -61,7 +61,7 @@ var Engine = class Engine
         this.Device.clearColor(0.0, 0.0, 0.0, 1.0);
         this.Device.enable(this.Device.DEPTH_TEST);
         //this.ViewProjectionMatrix = mat4.create();
-        this.ViewProjectionMatrix = m4.perspective(degToRad(60), this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000);
+        this.ViewProjectionMatrix = m4.perspective(degToRad(45), this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000);
         this.Camera = new Camera(new Vertex(0, 0, 0), new Vertex(0, 0, 0))
     }
     Clear(r, g, b, a)
@@ -70,7 +70,7 @@ var Engine = class Engine
         this.Device.viewport(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
         this.Device.clear(this.Device.COLOR_BUFFER_BIT | this.Device.DEPTH_BUFFER_BIT);
         this.Device2D.clearRect(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
-        this.ViewProjectionMatrix = m4.perspective(degToRad(60), this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000);
+        this.ViewProjectionMatrix = m4.perspective(degToRad(45), this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000);
 }
     SetShaderWorlds(WorldMatrix)
     {
@@ -124,6 +124,20 @@ var Engine = class Engine
         }
         return shader;
     }
+    ProjectVertex(Location)
+    {
+        var WorldMatrix = m4.translate(this.ViewProjectionMatrix, 0, 0, 0);
+        WorldMatrix = m4.xRotate(WorldMatrix, degToRad(this.Camera.Rotation.X));
+        WorldMatrix = m4.yRotate(WorldMatrix, degToRad(this.Camera.Rotation.Y));
+        WorldMatrix = m4.zRotate(WorldMatrix, degToRad(this.Camera.Rotation.Z));  
+        WorldMatrix = m4.translate(WorldMatrix, Location.X - this.Camera.Location.X, Location.Y - this.Camera.Location.Y, Location.Z - this.Camera.Location.Z);
+        var ClipSpace = m4.transformVector(WorldMatrix, [0, 0, 0, 1]);
+        ClipSpace[0] /= ClipSpace[3];
+        ClipSpace[1] /= ClipSpace[3];
+        var pixelX = (ClipSpace[0] *  0.5 + 0.5) * this.RenderingCanvas.width;
+        var pixelY = (ClipSpace[1] * -0.5 + 0.5) * this.RenderingCanvas.height;
+        return new Vertex(pixelX, pixelY, 0);
+    }
 }
 var GraphicsVertex = class GraphicsVertex
 {
@@ -147,12 +161,14 @@ var Index = class Index
 }
 var Object3D = class Object3D
 {
-    constructor(engine, vert, inde)
+    constructor(engine, vert, inde, name)
     {
+        this.name = name;
         var device = engine.Device;
         /**
          * Transpose the vertex objects to arrays
          */
+        this.Vertices = vert;
         this.vertices = new Array(vert.length * 3);
         this.colors = new Array(vert.length * 4);
         this.indices = new Array(inde.length * 3);
@@ -213,6 +229,40 @@ var Object3D = class Object3D
         this.Scale = new Vertex(1, 1, 1);
 
         this.RenderMode = "Solid";
+    }
+    GetCenterVertexPoint()
+    {
+        var x = 0;
+        var y = 0;
+        var z = 0;
+        for (var i = 0; i < this.Vertices.length; i++)
+        {
+            x += this.Vertices[i].X;
+            y += this.Vertices[i].Y;
+            z += this.Vertices[i].Z;
+        }
+        x /= this.Vertices.length;
+        y /= this.Vertices.length;
+        z /= this.Vertices.length;
+        return new Vertex(x, y, z);
+    }
+    GetCenterVertexPoint_HighZ()
+    {
+        var x = 0;
+        var y = 0;
+        var z = 0;
+        for (var i = 0; i < this.Vertices.length; i++)
+        {
+            x += this.Vertices[i].X;
+            y += this.Vertices[i].Y;
+            if (z < this.Vertices[i].Z)
+            {
+                z = this.Vertices[i].Z;
+            }
+        }
+        x /= this.Vertices.length;
+        y /= this.Vertices.length;
+        return new Vertex(x, y, z);
     }
     Update(engine)
     {

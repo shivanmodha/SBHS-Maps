@@ -48,6 +48,7 @@ function Initialize()
         var ds = 0;
         var a = 1;
         var type = "U";
+        var name = JSONObject.nodes[i].friendly;
         if (JSONObject.nodes[i].object.type == "WastedSpace")
         {
             ds = 0.8745;
@@ -153,13 +154,13 @@ function Initialize()
             if (vertices[0].Z != -1)
             {
                 var floor = vertices[0].Z;
-                Map[floor].push(new Object3D(ME, vertices, indices));
+                Map[floor].push(new Object3D(ME, vertices, indices, name));
             }
         }
     }
     ME.Camera.Location.X = 50;
     ME.Camera.Location.Y = 50;
-    ME.Camera.Location.Z = 200;
+    ME.Camera.Location.Z = 100;
     //ME.Camera.Rotation.X = -45;
 }
 function Event_Down(event)
@@ -203,17 +204,12 @@ function Render()
     for (var i = 0; i < Map[RenderedFloor].length; i++)
     {
         Map[RenderedFloor][i].Render(ME);
+        var n = Map[RenderedFloor][i].name;
+        if (n.includes("(h)") == false && n.includes("(s)") == false)
+        {
+            var v = ME.ProjectVertex(Map[RenderedFloor][i].GetCenterVertexPoint_HighZ());
+            ME.Device2D.textAlign="center"; 
+            ME.Device2D.fillText(n, v.X, v.Y);
+        }
     }
-    //WorldMatrix = m4.scaling(1, 1, 1);
-    //WorldMatrix = m4.xRotate(WorldMatrix, degToRad(ME.Camera.Rotation.X));
-    //WorldMatrix = m4.yRotate(WorldMatrix, degToRad(ME.Camera.Rotation.Y));
-    //WorldMatrix = m4.zRotate(WorldMatrix, degToRad(ME.Camera.Rotation.Z));
-    WorldMatrix = m4.translate(ME.ViewProjectionMatrix, 50 - ME.Camera.Location.X, 0 - ME.Camera.Location.Y, 0 - ME.Camera.Location.Z);
-    
-    var clipspace = m4.transformVector(WorldMatrix, [0, 50, 0, 1]);
-    clipspace[0] /= clipspace[3];
-    clipspace[1] /= clipspace[3];
-    var pixelX = (clipspace[0] *  0.5 + 0.5) * ME.RenderingCanvas.width;
-    var pixelY = (clipspace[1] * -0.5 + 0.5) * ME.RenderingCanvas.height;
-    ME.Device2D.fillText("Testing", pixelX, pixelY);
 }
