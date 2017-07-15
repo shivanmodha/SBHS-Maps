@@ -60,9 +60,8 @@ var Engine = class Engine
         this.Shader_Program.mvMatrixUniform = this.Device.getUniformLocation(this.Shader_Program, "uMVMatrix");
         this.Device.clearColor(0.0, 0.0, 0.0, 1.0);
         this.Device.enable(this.Device.DEPTH_TEST);
-        this.mvMatrix = mat4.create();
-        this.PerspectiveMatrix = mat4.create();
-        this.ViewProjectionMatrix = mat4.create();
+        //this.ViewProjectionMatrix = mat4.create();
+        this.ViewProjectionMatrix = m4.perspective(degToRad(60), this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000);
         this.Camera = new Camera(new Vertex(0, 0, 0), new Vertex(0, 0, 0))
     }
     Clear(r, g, b, a)
@@ -70,19 +69,12 @@ var Engine = class Engine
         this.Device.clearColor(r, g, b, a);
         this.Device.viewport(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
         this.Device.clear(this.Device.COLOR_BUFFER_BIT | this.Device.DEPTH_BUFFER_BIT);
-
         this.Device2D.clearRect(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
-
-        mat4.identity(this.ViewProjectionMatrix);
-        mat4.rotate(this.ViewProjectionMatrix, degToRad(this.Camera.Rotation.X), [1, 0, 0]);
-        mat4.rotate(this.ViewProjectionMatrix, degToRad(this.Camera.Rotation.Y), [0, 1, 0]);
-        mat4.rotate(this.ViewProjectionMatrix, degToRad(this.Camera.Rotation.Z), [0, 0, 1]);
-
-        mat4.perspective(45, this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000.0, this.PerspectiveMatrix);
-    }
+        this.ViewProjectionMatrix = m4.perspective(degToRad(60), this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000);
+}
     SetShaderWorlds(WorldMatrix)
     {
-        this.Device.uniformMatrix4fv(this.Shader_Program.pMatrixUniform, false, this.PerspectiveMatrix);
+        this.Device.uniformMatrix4fv(this.Shader_Program.pMatrixUniform, false, this.ViewProjectionMatrix);
         this.Device.uniformMatrix4fv(this.Shader_Program.mvMatrixUniform, false, WorldMatrix);
     }
     GetDevice()
@@ -212,7 +204,7 @@ var Object3D = class Object3D
         this.IndexBuffer.itemSize = 1;
         this.IndexBuffer.numItems = this.indices.length;
 
-        this.WorldMatrix = mat4.create();
+        this.WorldMatrix = m4.scaling(1, 1, 1);
 
         this.Location = new Vertex(0, 0, 0);
         this.Revolution = new Vertex(0, 0, 0);
@@ -224,20 +216,18 @@ var Object3D = class Object3D
     }
     Update(engine)
     {
-        mat4.identity(this.WorldMatrix);
-        mat4.rotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.X), [1, 0, 0]);
-        mat4.rotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.Y), [0, 1, 0]);
-        mat4.rotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.Z), [0, 0, 1]);
-        mat4.translate(this.WorldMatrix, [this.Location.X - engine.Camera.Location.X, this.Location.Y - engine.Camera.Location.Y, this.Location.Z - engine.Camera.Location.Z]);
-        //mat4.translate(this.WorldMatrix, [this.Location.X, this.Location.Y, this.Location.Z]);
-        mat4.rotate(this.WorldMatrix, degToRad(this.Revolution.X), [1, 0, 0]);
-        mat4.rotate(this.WorldMatrix, degToRad(this.Revolution.Y), [0, 1, 0]);
-        mat4.rotate(this.WorldMatrix, degToRad(this.Revolution.Z), [0, 0, 1]);
-        mat4.translate(this.WorldMatrix, [this.RevolutionRadius.X, this.RevolutionRadius.Y, this.RevolutionRadius.Z]);
-        mat4.rotate(this.WorldMatrix, degToRad(this.Rotation.X), [1, 0, 0]);
-        mat4.rotate(this.WorldMatrix, degToRad(this.Rotation.Y), [0, 1, 0]);
-        mat4.rotate(this.WorldMatrix, degToRad(this.Rotation.Z), [0, 0, 1]);
-        mat4.scale(this.WorldMatrix, [this.Scale.X, this.Scale.Y, this.Scale.Z]);
+        this.WorldMatrix = m4.scaling(this.Scale.X, this.Scale.Y, this. Scale.Z);
+        this.WorldMatrix = m4.xRotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.X));
+        this.WorldMatrix = m4.yRotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.Y));
+        this.WorldMatrix = m4.zRotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.Z));
+        this.WorldMatrix = m4.translate(this.WorldMatrix, this.Location.X - engine.Camera.Location.X, this.Location.Y - engine.Camera.Location.Y, this.Location.Z - engine.Camera.Location.Z);
+        this.WorldMatrix = m4.xRotate(this.WorldMatrix, degToRad(this.Revolution.X));
+        this.WorldMatrix = m4.yRotate(this.WorldMatrix, degToRad(this.Revolution.Y));
+        this.WorldMatrix = m4.zRotate(this.WorldMatrix, degToRad(this.Revolution.Z));        
+        this.WorldMatrix = m4.translate(this.WorldMatrix, this.RevolutionRadius.X, this.RevolutionRadius.Y, this.RevolutionRadius.Z);
+        this.WorldMatrix = m4.xRotate(this.WorldMatrix, degToRad(this.Rotation.X));
+        this.WorldMatrix = m4.yRotate(this.WorldMatrix, degToRad(this.Rotation.Y));
+        this.WorldMatrix = m4.zRotate(this.WorldMatrix, degToRad(this.Rotation.Z));
     }
     Render(engine)
     {
