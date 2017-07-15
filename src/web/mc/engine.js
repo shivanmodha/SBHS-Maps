@@ -216,6 +216,7 @@ var Object3D = class Object3D
     }
     Update(engine)
     {
+        //this.WorldMatrix = m4.translate(engine.ViewProjectionMatrix, 0, 0, 0);
         this.WorldMatrix = m4.scaling(this.Scale.X, this.Scale.Y, this. Scale.Z);
         this.WorldMatrix = m4.xRotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.X));
         this.WorldMatrix = m4.yRotate(this.WorldMatrix, degToRad(engine.Camera.Rotation.Y));

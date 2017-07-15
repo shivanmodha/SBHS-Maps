@@ -203,9 +203,17 @@ function Render()
     for (var i = 0; i < Map[RenderedFloor].length; i++)
     {
         Map[RenderedFloor][i].Render(ME);
-        var m = Map[RenderedFloor][i].WorldMatrix;
-        //mat4.translate(m, [Location.X, Location.Y, Location.Z]);
-
-        ME.Device2D.fillText("Testing", m[12] + 100, m[13] * -1 + 100);
     }
+    //WorldMatrix = m4.scaling(1, 1, 1);
+    //WorldMatrix = m4.xRotate(WorldMatrix, degToRad(ME.Camera.Rotation.X));
+    //WorldMatrix = m4.yRotate(WorldMatrix, degToRad(ME.Camera.Rotation.Y));
+    //WorldMatrix = m4.zRotate(WorldMatrix, degToRad(ME.Camera.Rotation.Z));
+    WorldMatrix = m4.translate(ME.ViewProjectionMatrix, 50 - ME.Camera.Location.X, 0 - ME.Camera.Location.Y, 0 - ME.Camera.Location.Z);
+    
+    var clipspace = m4.transformVector(WorldMatrix, [0, 50, 0, 1]);
+    clipspace[0] /= clipspace[3];
+    clipspace[1] /= clipspace[3];
+    var pixelX = (clipspace[0] *  0.5 + 0.5) * ME.RenderingCanvas.width;
+    var pixelY = (clipspace[1] * -0.5 + 0.5) * ME.RenderingCanvas.height;
+    ME.Device2D.fillText("Testing", pixelX, pixelY);
 }
