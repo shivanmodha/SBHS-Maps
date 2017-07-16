@@ -208,7 +208,9 @@ function Render()
         if (n.includes("(h)") == false && n.includes("(s)") == false)
         {
             var v = ME.ProjectVertex(Map[RenderedFloor][i].GetCenterVertexPoint_HighZ());
-            ME.Device2D.textAlign="center"; 
+            v.Y += 6;
+            ME.Device2D.textAlign = "center";
+            ME.Device2D.font = "12px Calibri Light"; 
             ME.Device2D.fillText(n, v.X, v.Y);
         }
     }
