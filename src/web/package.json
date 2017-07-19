@@ -4,7 +4,8 @@
   "description": "SBHS-Maps web build",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node main.js"
   },
   "author": "Shivan Modha",
   "license": "ISC"
