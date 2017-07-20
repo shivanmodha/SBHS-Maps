@@ -71,7 +71,7 @@ var Engine = class Engine
         this.Device.clear(this.Device.COLOR_BUFFER_BIT | this.Device.DEPTH_BUFFER_BIT);
         this.Device2D.clearRect(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
         this.ViewProjectionMatrix = m4.perspective(degToRad(45), this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000);
-}
+    }
     SetShaderWorlds(WorldMatrix)
     {
         this.Device.uniformMatrix4fv(this.Shader_Program.pMatrixUniform, false, this.ViewProjectionMatrix);
@@ -137,6 +137,20 @@ var Engine = class Engine
         var pixelX = (ClipSpace[0] *  0.5 + 0.5) * this.RenderingCanvas.width;
         var pixelY = (ClipSpace[1] * -0.5 + 0.5) * this.RenderingCanvas.height;
         return new Vertex(pixelX, pixelY, 0);
+    }
+    UnprojectPoint(Point)
+    {
+        var WorldMatrix = m4.translate(this.ViewProjectionMatrix, 0, 0, 0);
+        WorldMatrix = m4.xRotate(WorldMatrix, degToRad(this.Camera.Rotation.X));
+        WorldMatrix = m4.yRotate(WorldMatrix, degToRad(this.Camera.Rotation.Y));
+        WorldMatrix = m4.zRotate(WorldMatrix, degToRad(this.Camera.Rotation.Z));  
+        WorldMatrix = m4.translate(WorldMatrix, this.Camera.Location.X, this.Camera.Location.Y, this.Camera.Location.Z);
+        var ClipSpace = m4.transformVector(WorldMatrix, [0, 0, 0, 1]);
+        ClipSpace[0] = (Point.X / (this.RenderingCanvas.width * 0.5)) - 1;
+        ClipSpace[1] = 1 - (Point.Y / (this.RenderingCanvas.height * 0.5));
+        ClipSpace[0] *= ClipSpace[3];
+        ClipSpace[1] *= ClipSpace[3];
+        return ClipSpace;
     }
 }
 var GraphicsVertex = class GraphicsVertex

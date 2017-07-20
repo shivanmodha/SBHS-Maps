@@ -214,4 +214,7 @@ function Render()
             ME.Device2D.fillText(n, v.X, v.Y);
         }
     }
+    var v = ME.UnprojectPoint(new Vertex(ME.RenderingCanvas.width / 2 + 1, ME.RenderingCanvas.height / 2, 0));
+    ME.Device2D.fillText(v[0] + ", " + v[1] + ", " + v[2] + ", " + v[3], ME.RenderingCanvas.width / 2, 10);
+    ME.Device2D.fillText("*", ME.RenderingCanvas.width / 2, ME.RenderingCanvas.height / 2);
 }
