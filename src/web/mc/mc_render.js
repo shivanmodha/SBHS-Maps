@@ -6,8 +6,14 @@ var MouseButton = 0;
 var MousePosition = new Point(0, 0);
 var DeltaMouse = new Point(0, 0);
 var PreviousMousePosition = new Point(0, 0);
+var url = "";
 function Main()
 {
+    url = document.URL.substring(document.URL.indexOf("/") + 1);
+    if (url.includes("?")) url = url.substring(0, url.indexOf("?"));
+    if (url.endsWith("/")) url = url.substring(0, url.length - 1);
+    url = url.substring(url.indexOf("/") + 1, url.lastIndexOf("/") + 1);
+    url = url.substring(url.indexOf("/"));
     window.addEventListener("mousedown", Event_Down);
     window.addEventListener("mouseup", Event_Up);
     window.addEventListener("mousemove", Event_Move);
@@ -17,7 +23,7 @@ function Main()
 
     var RC3 = document.getElementById("studios.vanish.mc.3D");
     var RC2 = document.getElementById("studios.vanish.mc.2D");
-    ME = new Engine(RC2, RC3);
+    ME = new Engine(RC2, RC3, url);
 
     Initialize();
     MainLoop();
@@ -26,7 +32,7 @@ function Initialize()
 {
     var source = "";
     var raw = new XMLHttpRequest();
-    raw.open("GET", "map.ngm", false);
+    raw.open("GET", url + "map.ngm", false);
     raw.onreadystatechange = function()
     {
         if (this.readyState == 4)

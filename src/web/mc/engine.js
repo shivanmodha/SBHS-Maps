@@ -63,7 +63,7 @@ var Engine = class Engine
      * Creates and initializes a new rendering window for OpenGL
      * @param {Element} canvas 
      */
-    constructor(canvas2D, canvas)
+    constructor(canvas2D, canvas, url)
     {
         this.RenderingCanvas = canvas;
         this.Device = this.RenderingCanvas.getContext('webgl');
@@ -75,8 +75,8 @@ var Engine = class Engine
         this.RenderingCanvas.height = parseInt(style.height);
         this.Device.viewportWidth =  canvas.width;
         this.Device.viewportHeight = canvas.height;
-        this.Shader_Vertex = this.LoadShaderFile("shader.MSV");
-        this.Shader_Pixel = this.LoadShaderFile("shader.MSP");
+        this.Shader_Vertex = this.LoadShaderFile(url + "shader.MSV");
+        this.Shader_Pixel = this.LoadShaderFile(url + "shader.MSP");
         this.Shader_Program = this.Device.createProgram();
         this.Device.attachShader(this.Shader_Program, this.Shader_Vertex);
         this.Device.attachShader(this.Shader_Program, this.Shader_Pixel);
