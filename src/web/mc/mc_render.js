@@ -183,7 +183,7 @@ function Event_Wheel(event)
 {
     var e = window.event || event;
 	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-    ME.Camera.Location.Z -= delta;
+    ME.Camera.Location.Z -= (delta * 2);
 }
 function MainLoop()
 {
@@ -197,14 +197,25 @@ function Update()
     {
         DeltaMouse = new Point(PreviousMousePosition.X - MousePosition.X, PreviousMousePosition.Y - MousePosition.Y);
         PreviousMousePosition = new Point(MousePosition.X, MousePosition.Y);
-        ME.Camera.Location.X += (DeltaMouse.X * 10) / (500 - ME.Camera.Location.Z);
-        ME.Camera.Location.Y -= (DeltaMouse.Y * 10) / (500 - ME.Camera.Location.Z);
+        ME.Camera.Location.X += (DeltaMouse.X * 18) / (500 - ME.Camera.Location.Z);
+        ME.Camera.Location.Y -= (DeltaMouse.Y * 18) / (500 - ME.Camera.Location.Z);
+    }
+    for (var i = 0; i < Map[RenderedFloor].length; i++)
+    {
+        if (Map_Labels[RenderedFloor][i].Collision(MousePosition))
+        {
+            Map_Labels[RenderedFloor][i].b = 255;
+        }
+        else
+        {
+            Map_Labels[RenderedFloor][i].b = 0;
+        }
     }
 }
 function Render()
 {
     ME.Clear(0.875, 0.875, 0.875, 1);
-    for (var i = 1; i < Map[RenderedFloor].length; i++)
+    for (var i = 0; i < Map[RenderedFloor].length; i++)
     {
         Map[RenderedFloor][i].Render(ME);
         var n = Map[RenderedFloor][i].name;

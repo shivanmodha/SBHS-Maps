@@ -31,6 +31,9 @@ var Label = class Label
         this.Location = location;
         this.Size = new Point(0, height);
         this.Projection = new Vertex(0, 0, 0);
+        this.r = 0;
+        this.g = 0;
+        this.b = 0;
     }
     Collision(point)
     {
@@ -49,7 +52,8 @@ var Label = class Label
     {
         this.Projection = engine.ProjectVertex(this.Location);
         var s = engine.Device2D.measureText(this.Text);
-        this.Size.X = s.width;
+        this.Size.X = s.width;        
+        engine.Device2D.fillStyle = 'rgb(' + this.r.toString() + ', ' + this.g.toString() + ', ' + this.b.toString() + ')';
         engine.Device2D.fillText(this.Text, this.Projection.X - (this.Size.X / 2), this.Projection.Y + (this.Size.Y / 2));
     }
 }
