@@ -6,27 +6,32 @@ var MouseButton = 0;
 var MousePosition = new Point(0, 0);
 var DeltaMouse = new Point(0, 0);
 var PreviousMousePosition = new Point(0, 0);
-var url = "";
 function Main()
 {
-    url = document.URL.substring(document.URL.indexOf("/") + 1);
-    if (url.includes("?")) url = url.substring(0, url.indexOf("?"));
-    if (url.endsWith("/")) url = url.substring(0, url.length - 1);
-    url = url.substring(url.indexOf("/") + 1, url.lastIndexOf("/") + 1);
-    url = url.substring(url.indexOf("/"));
+    url = ParseURL();
     window.addEventListener("mousedown", Event_Down);
     window.addEventListener("mouseup", Event_Up);
     window.addEventListener("mousemove", Event_Move);
     window.addEventListener("mouseover", Event_Move);
     window.addEventListener("mousewheel", Event_Wheel);
     window.addEventListener("DOMMouseScroll", Event_Wheel);
-
     var RC3 = document.getElementById("studios.vanish.mc.3D");
     var RC2 = document.getElementById("studios.vanish.mc.2D");
     ME = new Engine(RC2, RC3, url);
-
     Initialize();
     MainLoop();
+}
+function ParseURL()
+{
+    var url = document.URL;
+    var url_search = new URL(url);
+    url = url.substring(url.indexOf("/") + 1);
+    if (url.includes("?")) url = url.substring(0, url.indexOf("?"));
+    if (url.endsWith("/")) url = url.substring(0, url.length - 1);
+    url = url.substring(url.indexOf("/") + 1, url.lastIndexOf("/") + 1);
+    url = url.substring(url.indexOf("/"));
+    RenderedFloor = parseInt(url_search.searchParams.get("floor"));
+    return url;
 }
 function Initialize()
 {
@@ -89,7 +94,7 @@ function Initialize()
         }
         var offset = 0.01;
         var height = 0.5;
-        if (name == "" || name.includes("Library") || name.includes("208"))
+        if (name == "" || name.includes("Library") || name.includes("208") || name.includes("Locker"))
         {
             offset = 0.0;
         }

@@ -2,7 +2,7 @@ var http = require("http");
 var fs = require("fs");
 var server = http.createServer(function (request, response)
 {
-    url = request.url;
+    var url = request.url;
     if (url.includes("?"))
     {
         url = url.substring(0, url.lastIndexOf("/"));
