@@ -1,5 +1,6 @@
 var ME;
 var Map = new Array(6);
+var Map_Labels = new Array(6);
 var RenderedFloor = 0;
 var MouseButton = 0;
 var MousePosition = new Point(0, 0);
@@ -41,6 +42,7 @@ function Initialize()
     for (var i = 0; i < 6; i++)
     {
         Map[i] = [];
+        Map_Labels[i] = [];
     }
     for (var i = 0; i < JSONObject.nodes.length; i++)
     {
@@ -155,6 +157,7 @@ function Initialize()
             {
                 var floor = vertices[0].Z;
                 Map[floor].push(new Object3D(ME, vertices, indices, name));
+                Map_Labels[floor].push(new Label(name, Map[floor][Map[floor].length - 1].GetCenterVertexPoint_HighZ(), 12));
             }
         }
     }
@@ -201,20 +204,13 @@ function Update()
 function Render()
 {
     ME.Clear(0.875, 0.875, 0.875, 1);
-    for (var i = 0; i < Map[RenderedFloor].length; i++)
+    for (var i = 1; i < Map[RenderedFloor].length; i++)
     {
         Map[RenderedFloor][i].Render(ME);
         var n = Map[RenderedFloor][i].name;
         if (n.includes("(h)") == false && n.includes("(s)") == false)
         {
-            var v = ME.ProjectVertex(Map[RenderedFloor][i].GetCenterVertexPoint_HighZ());
-            v.Y += 6;
-            ME.Device2D.textAlign = "center";
-            ME.Device2D.font = "12px Calibri Light"; 
-            ME.Device2D.fillText(n, v.X, v.Y);
+            Map_Labels[RenderedFloor][i].Render(ME);
         }
     }
-    var v = ME.UnprojectPoint(new Vertex(ME.RenderingCanvas.width / 2 + 1, ME.RenderingCanvas.height / 2, 0));
-    ME.Device2D.fillText(v[0] + ", " + v[1] + ", " + v[2] + ", " + v[3], ME.RenderingCanvas.width / 2, 10);
-    ME.Device2D.fillText("*", ME.RenderingCanvas.width / 2, ME.RenderingCanvas.height / 2);
 }

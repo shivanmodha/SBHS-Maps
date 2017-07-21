@@ -23,6 +23,36 @@ var Camera = class Camera
         this.Rotation = rotation;
     }
 }
+var Label = class Label
+{
+    constructor(text, location, height)
+    {
+        this.Text = text;
+        this.Location = location;
+        this.Size = new Point(0, height);
+        this.Projection = new Vertex(0, 0, 0);
+    }
+    Collision(point)
+    {
+        var __return = false;
+        var tplf = new Point(this.Projection.X - (this.Size.X / 2), this.Projection.Y - (this.Size.Y / 2))
+        if (point.X > tplf.X && point.X < tplf.X + this.Size.X)
+        {
+            if (point.Y > tplf.Y && point.Y < tplf.Y + this.Size.Y)
+            {
+                __return = true;
+            }
+        }
+        return __return;
+    }
+    Render(engine)
+    {
+        this.Projection = engine.ProjectVertex(this.Location);
+        var s = engine.Device2D.measureText(this.Text);
+        this.Size.X = s.width;
+        engine.Device2D.fillText(this.Text, this.Projection.X - (this.Size.X / 2), this.Projection.Y + (this.Size.Y / 2));
+    }
+}
 var Engine = class Engine
 {
     /**
@@ -137,20 +167,6 @@ var Engine = class Engine
         var pixelX = (ClipSpace[0] *  0.5 + 0.5) * this.RenderingCanvas.width;
         var pixelY = (ClipSpace[1] * -0.5 + 0.5) * this.RenderingCanvas.height;
         return new Vertex(pixelX, pixelY, 0);
-    }
-    UnprojectPoint(Point)
-    {
-        var WorldMatrix = m4.translate(this.ViewProjectionMatrix, 0, 0, 0);
-        WorldMatrix = m4.xRotate(WorldMatrix, degToRad(this.Camera.Rotation.X));
-        WorldMatrix = m4.yRotate(WorldMatrix, degToRad(this.Camera.Rotation.Y));
-        WorldMatrix = m4.zRotate(WorldMatrix, degToRad(this.Camera.Rotation.Z));  
-        WorldMatrix = m4.translate(WorldMatrix, this.Camera.Location.X, this.Camera.Location.Y, this.Camera.Location.Z);
-        var ClipSpace = m4.transformVector(WorldMatrix, [0, 0, 0, 1]);
-        ClipSpace[0] = (Point.X / (this.RenderingCanvas.width * 0.5)) - 1;
-        ClipSpace[1] = 1 - (Point.Y / (this.RenderingCanvas.height * 0.5));
-        ClipSpace[0] *= ClipSpace[3];
-        ClipSpace[1] *= ClipSpace[3];
-        return ClipSpace;
     }
 }
 var GraphicsVertex = class GraphicsVertex
