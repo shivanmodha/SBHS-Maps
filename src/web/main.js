@@ -5,7 +5,7 @@ var server = http.createServer(function (request, response)
     var url = request.url;
     if (url.includes("?"))
     {
-        url = url.substring(0, url.lastIndexOf("/"));
+        url = url.substring(0, url.lastIndexOf("?"));
     }
     if (url.endsWith("/"))
     {

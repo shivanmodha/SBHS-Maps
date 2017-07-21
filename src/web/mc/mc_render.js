@@ -6,6 +6,9 @@ var MouseButton = 0;
 var MousePosition = new Point(0, 0);
 var DeltaMouse = new Point(0, 0);
 var PreviousMousePosition = new Point(0, 0);
+var tmp_location;
+var tmp_rotation;
+var url_base
 function Main()
 {
     url = ParseURL();
@@ -18,8 +21,17 @@ function Main()
     var RC3 = document.getElementById("studios.vanish.mc.3D");
     var RC2 = document.getElementById("studios.vanish.mc.2D");
     ME = new Engine(RC2, RC3, url);
+    ME.Camera.Location = tmp_location;
+    ME.Camera.Rotation = tmp_rotation;
+    UpdateURL();
     Initialize();
     MainLoop();
+}
+function UpdateURL()
+{
+    var url = "?floor=" + RenderedFloor + "&lox=" + ME.Camera.Location.X + "&loy=" + ME.Camera.Location.Y + "&loz=" + ME.Camera.Location.Z;
+    url += "&rox=" + ME.Camera.Rotation.X + "&roy=" + ME.Camera.Rotation.Y + "&roz=" + ME.Camera.Rotation.Z;
+    window.history.replaceState({"html": url}, "", url)
 }
 function ParseURL()
 {
@@ -28,9 +40,26 @@ function ParseURL()
     url = url.substring(url.indexOf("/") + 1);
     if (url.includes("?")) url = url.substring(0, url.indexOf("?"));
     if (url.endsWith("/")) url = url.substring(0, url.length - 1);
+    url_base = url.substring(url.indexOf("/") + 1);
+    url_base = url_base.substring(url_base.indexOf("/"));
     url = url.substring(url.indexOf("/") + 1, url.lastIndexOf("/") + 1);
     url = url.substring(url.indexOf("/"));
     RenderedFloor = parseInt(url_search.searchParams.get("floor"));
+    if (!RenderedFloor) RenderedFloor = 0;
+    var x = parseFloat(url_search.searchParams.get("lox"));
+    if (!x) x = 50;
+    var y = parseFloat(url_search.searchParams.get("loy"));
+    if (!y) y = 50;
+    var z = parseFloat(url_search.searchParams.get("loz"));
+    if (!z) z = 100;
+    tmp_location = new Vertex(x, y, z);
+    x = parseFloat(url_search.searchParams.get("rox"));
+    if (!x) x = 0;
+    y = parseFloat(url_search.searchParams.get("roy"));
+    if (!y) y = 0;
+    z = parseFloat(url_search.searchParams.get("roz"));
+    if (!z) z = 0;
+    tmp_rotation = new Vertex(x, y, z);
     return url;
 }
 function Initialize()
@@ -212,10 +241,6 @@ function Initialize()
             }
         }
     }
-    ME.Camera.Location.X = 50;
-    ME.Camera.Location.Y = 50;
-    ME.Camera.Location.Z = 100;
-    //ME.Camera.Rotation.X = -45;
 }
 function Event_Down(event)
 {
@@ -225,6 +250,7 @@ function Event_Down(event)
 function Event_Up(event)
 {
     MouseButton = 0;
+    UpdateURL();
 }
 function Event_Move(event)
 {
@@ -235,6 +261,7 @@ function Event_Wheel(event)
     var e = window.event || event;
 	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
     ME.Camera.Location.Z -= (delta * 2);
+    UpdateURL();
 }
 function MainLoop()
 {
@@ -253,13 +280,20 @@ function Update()
     }
     for (var i = 0; i < Map[RenderedFloor].length; i++)
     {
-        if (Map_Labels[RenderedFloor][i].Collision(MousePosition))
+        try
         {
-            Map_Labels[RenderedFloor][i].b = 255;
+            if (Map_Labels[RenderedFloor][i].Collision(MousePosition))
+            {
+                Map_Labels[RenderedFloor][i].b = 255;
+            }
+            else
+            {
+                Map_Labels[RenderedFloor][i].b = 0;
+            }
         }
-        else
+        catch (e)
         {
-            Map_Labels[RenderedFloor][i].b = 0;
+
         }
     }
 }
