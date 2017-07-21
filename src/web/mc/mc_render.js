@@ -49,28 +49,59 @@ function Initialize()
         var s = 0;
         var ds = 0;
         var a = 1;
+        var r = 0;
+        var g = 0;
+        var b = 0;
         var type = "U";
         var name = JSONObject.nodes[i].friendly;
         if (JSONObject.nodes[i].object.type == "WastedSpace")
         {
             ds = 0.8745;
             s = 0.8745;
+            r = s;
+            g = s;
+            b = s;
             type = "W";
         }
         else if (JSONObject.nodes[i].object.type == "Building")
         {
             ds = 0.784;
             s = 0.968;
+            r = s;
+            g = s;
+            b = s;
             type = "B";
         }
         else if (JSONObject.nodes[i].object.type == "Path")
         {
             ds = 1;
             s = 1;
+            r = s;
+            g = s;
+            b = s;
             type = "P";
         }
         var offset = 0.01;
         var height = 0.5;
+        if (name == "" || name.includes("Library") || name.includes("208"))
+        {
+            offset = 0.0;
+        }
+        else if (name == "Court Yard")
+        {
+            height = 0.25;
+            offset = 0.0;
+            r = 0.796;
+            g = 0.902;
+            b = 0.639;
+        }
+        else if (name.includes("Bathroom"))
+        {
+            r = 0.639;
+            g = 0.8;
+            b = 1;
+            height = 0.35;
+        }
         var vertices = 
         [
             new GraphicsVertex(JSONObject.nodes[i].object.BL.x, JSONObject.nodes[i].object.BL.y, JSONObject.nodes[i].object.BL.z, ds, ds, ds, a),
@@ -97,10 +128,10 @@ function Initialize()
                 /**
                  * TOP
                  */
-                new GraphicsVertex(JSONObject.nodes[i].object.BL.x + offset, JSONObject.nodes[i].object.BL.y + offset, JSONObject.nodes[i].object.BL.z + height, s, s, s, a),
-                new GraphicsVertex(JSONObject.nodes[i].object.TL.x + offset, JSONObject.nodes[i].object.TL.y - offset, JSONObject.nodes[i].object.TL.z + height, s, s, s, a),
-                new GraphicsVertex(JSONObject.nodes[i].object.TR.x - offset, JSONObject.nodes[i].object.TR.y - offset, JSONObject.nodes[i].object.TR.z + height, s, s, s, a),
-                new GraphicsVertex(JSONObject.nodes[i].object.BR.x - offset, JSONObject.nodes[i].object.BR.y + offset, JSONObject.nodes[i].object.BR.z + height, s, s, s, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.BL.x + offset, JSONObject.nodes[i].object.BL.y + offset, JSONObject.nodes[i].object.BL.z + height, r, g, b, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TL.x + offset, JSONObject.nodes[i].object.TL.y - offset, JSONObject.nodes[i].object.TL.z + height, r, g, b, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.TR.x - offset, JSONObject.nodes[i].object.TR.y - offset, JSONObject.nodes[i].object.TR.z + height, r, g, b, a),
+                new GraphicsVertex(JSONObject.nodes[i].object.BR.x - offset, JSONObject.nodes[i].object.BR.y + offset, JSONObject.nodes[i].object.BR.z + height, r, g, b, a),
                 /**
                  * LEFT
                  */
@@ -157,7 +188,16 @@ function Initialize()
             {
                 var floor = vertices[0].Z;
                 Map[floor].push(new Object3D(ME, vertices, indices, name));
-                Map_Labels[floor].push(new Label(name, Map[floor][Map[floor].length - 1].GetCenterVertexPoint_HighZ(), 12));
+                var sendName = name;                
+                if (name.indexOf("(") > 2)
+                {
+                    sendName = name.substring(0, name.indexOf("("));
+                }
+                if (sendName.includes("208 E"))
+                {
+                    sendName = "";
+                }
+                Map_Labels[floor].push(new Label(sendName, Map[floor][Map[floor].length - 1].GetCenterVertexPoint_HighZ(), 12));
             }
         }
     }
