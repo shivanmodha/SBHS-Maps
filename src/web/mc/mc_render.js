@@ -24,9 +24,12 @@ function Main()
 {
     url = ParseURL();
     window.addEventListener("mousedown", Event_Down);
+    window.addEventListener("touchstart", Event_TDown);
     window.addEventListener("mouseup", Event_Up);
+    window.addEventListener("touchend", Event_Up);
     window.addEventListener("mousemove", Event_Move);
     window.addEventListener("mouseover", Event_Move);
+    window.addEventListener("touchmove", Event_TMove);
     window.addEventListener("mousewheel", Event_Wheel);
     window.addEventListener("DOMMouseScroll", Event_Wheel);
     var RC3 = document.getElementById("studios.vanish.mc.3D");
@@ -35,6 +38,7 @@ function Main()
     ME.Camera.Location = tmp_location;
     ME.Camera.Rotation = tmp_rotation;
     UpdateURL();
+
     Initialize();
     MainLoop();
 }
@@ -289,6 +293,11 @@ function Event_Down(event)
     MouseButton = 1;
     PreviousMousePosition = new Point(event.clientX, event.clientY);
 }
+function Event_TDown(event)
+{
+    MouseButton = 1;
+    PreviousMousePosition = new Point(event.touches[0].pageX, event.touches[0].pageY);
+}
 function Event_Up(event)
 {
     MouseButton = 0;
@@ -297,6 +306,10 @@ function Event_Up(event)
 function Event_Move(event)
 {
     MousePosition = new Point(event.clientX, event.clientY);
+}
+function Event_TMove(event)
+{
+    MousePosition = new Point(event.touches[0].pageX, event.touches[0].pageY);
 }
 function Event_Wheel(event)
 {
