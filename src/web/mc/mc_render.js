@@ -38,7 +38,6 @@ function Main()
     ME.Camera.Location = tmp_location;
     ME.Camera.Rotation = tmp_rotation;
     UpdateURL();
-
     Initialize();
     MainLoop();
 }
@@ -154,7 +153,7 @@ function Initialize()
         }
         var offset = 0.01;
         var height = 0.5;
-        if (name == "" || name.includes("Library") || name.includes("208 (F") || name.includes("208 E") || name.includes("Locker") || name.includes("C212") || name.includes("D102"))
+        if (name == "" || name.includes("Library") || name.includes("208 (F") || name.includes("208 E") || name.includes("Locker") || name.includes("C212") || name.includes("D102") || name.includes("D104"))
         {
             offset = 0.0;
         }
@@ -336,17 +335,26 @@ function Update()
         ME.Camera.Location.X += DeltaMouse.X / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149));
         ME.Camera.Location.Y -= DeltaMouse.Y / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149));
     }
+    var selected = false;
     for (var i = 0; i < Map[RenderedFloor].length; i++)
     {
+        Map_Labels[RenderedFloor][i].Update(ME, z_rotation);
         try
         {
-            if (Map_Labels[RenderedFloor][i].Collision(MousePosition))
+            if (Map_Labels[RenderedFloor][i].Collision(MousePosition, 50, 50) && selected == false && !Map_Labels[RenderedFloor][i].Text.startsWith("("))
             {
-                Map_Labels[RenderedFloor][i].b = 255;
+                Map[RenderedFloor][i].ShadeR = 0.80;
+                Map[RenderedFloor][i].ShadeG = 0.80;
+                Map[RenderedFloor][i].ShadeB = 0.80;
+                Map[RenderedFloor][i].ShadeA = 1;
+                selected = true;
             }
             else
             {
-                Map_Labels[RenderedFloor][i].b = 0;
+                Map[RenderedFloor][i].ShadeR = 1;
+                Map[RenderedFloor][i].ShadeG = 1;
+                Map[RenderedFloor][i].ShadeB = 1;
+                Map[RenderedFloor][i].ShadeA = 1;
             }
         }
         catch (e)

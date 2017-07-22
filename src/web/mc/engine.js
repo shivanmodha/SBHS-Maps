@@ -35,7 +35,7 @@ var Label = class Label
         this.g = 0;
         this.b = 0;
     }
-    Collision(point)
+    Collision(point, boxX, boxY)
     {
         var __return = false;
         var tplf = new Point(this.Projection.X - (this.Size.X / 2), this.Projection.Y - (this.Size.Y / 2))
@@ -46,13 +46,28 @@ var Label = class Label
                 __return = true;
             }
         }
+        tplf = new Point(this.Projection.X - (boxX / 2), this.Projection.Y - (boxY / 2))
+        if (point.X > tplf.X && point.X < tplf.X + boxX)
+        {
+            if (point.Y > tplf.Y && point.Y < tplf.Y + boxY)
+            {
+                __return = true;
+            }
+        }
+        if (!this.Text.length)
+        {
+            __return = false;
+        }
         return __return;
     }
-    Render(engine, z_rotation)
+    Update(engine, z_rotation)
     {
         this.Projection = engine.ProjectVertex(this.Location, z_rotation);
         var s = engine.Device2D.measureText(this.Text);
         this.Size.X = s.width;
+    }
+    Render(engine, z_rotation)
+    {
         engine.Device2D.fillStyle = 'rgb(' + this.r.toString() + ', ' + this.g.toString() + ', ' + this.b.toString() + ')';
         engine.Device2D.fillText(this.Text, this.Projection.X - (this.Size.X / 2), this.Projection.Y + (this.Size.Y / 2));
     }
@@ -284,6 +299,10 @@ var Object3D = class Object3D
         this.Scale = new Vertex(1, 1, 1);
 
         this.RenderMode = "Solid";
+        this.ShadeR = 1;
+        this.ShadeG = 1;
+        this.ShadeB = 1;
+        this.ShadeA = 1;
     }
     GetCenterVertexPoint()
     {
@@ -344,7 +363,7 @@ var Object3D = class Object3D
         Device.bindBuffer(Device.ARRAY_BUFFER, this.ColorBuffer);
         Device.vertexAttribPointer(engine.Shader_Program.vertexColorAttribute, this.ColorBuffer.itemSize, Device.FLOAT, false, 0, 0);
         Device.bindBuffer(Device.ELEMENT_ARRAY_BUFFER, this.IndexBuffer);
-        engine.SetShaderWorlds(this.WorldMatrix, [1, 0, 0, 1]);
+        engine.SetShaderWorlds(this.WorldMatrix, [this.ShadeR, this.ShadeG, this.ShadeB, this.ShadeA]);
         var mode = Device.TRIANGLES;
         if (this.RenderMode === "WireFrame")
         {
