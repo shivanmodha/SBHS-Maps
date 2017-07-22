@@ -48,11 +48,11 @@ var Label = class Label
         }
         return __return;
     }
-    Render(engine)
+    Render(engine, z_rotation)
     {
-        this.Projection = engine.ProjectVertex(this.Location);
+        this.Projection = engine.ProjectVertex(this.Location, z_rotation);
         var s = engine.Device2D.measureText(this.Text);
-        this.Size.X = s.width;        
+        this.Size.X = s.width;
         engine.Device2D.fillStyle = 'rgb(' + this.r.toString() + ', ' + this.g.toString() + ', ' + this.b.toString() + ')';
         engine.Device2D.fillText(this.Text, this.Projection.X - (this.Size.X / 2), this.Projection.Y + (this.Size.Y / 2));
     }
@@ -101,9 +101,12 @@ var Engine = class Engine
     Clear(r, g, b, a)
     {
         this.Device.clearColor(r, g, b, a);
-        this.Device.viewport(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
+        var style = window.getComputedStyle(this.RenderingCanvas);
+        this.Device.viewportWidth = parseInt(style.width);
+        this.Device.viewportHeight = parseInt(style.height);
+        this.Device.viewport(0, 0, this.Device.drawingBufferWidth, this.Device.drawingBufferHeight);
         this.Device.clear(this.Device.COLOR_BUFFER_BIT | this.Device.DEPTH_BUFFER_BIT);
-        this.Device2D.clearRect(0, 0, this.Device.viewportWidth, this.Device.viewportHeight);
+        this.Device2D.clearRect(0, 0, this.Device.drawingBufferWidth, this.Device.drawingBufferHeight);
         this.ViewProjectionMatrix = m4.perspective(degToRad(45), this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000);
     }
     SetShaderWorlds(WorldMatrix)
@@ -165,6 +168,22 @@ var Engine = class Engine
         WorldMatrix = m4.yRotate(WorldMatrix, degToRad(this.Camera.Rotation.Y));
         WorldMatrix = m4.zRotate(WorldMatrix, degToRad(this.Camera.Rotation.Z));  
         WorldMatrix = m4.translate(WorldMatrix, Location.X - this.Camera.Location.X, Location.Y - this.Camera.Location.Y, Location.Z - this.Camera.Location.Z);
+        var ClipSpace = m4.transformVector(WorldMatrix, [0, 0, 0, 1]);
+        ClipSpace[0] /= ClipSpace[3];
+        ClipSpace[1] /= ClipSpace[3];
+        var pixelX = (ClipSpace[0] *  0.5 + 0.5) * this.RenderingCanvas.width;
+        var pixelY = (ClipSpace[1] * -0.5 + 0.5) * this.RenderingCanvas.height;
+        return new Vertex(pixelX, pixelY, 0);
+    }
+    ProjectVertex(Location, z_rotation)
+    {
+        var WorldMatrix = m4.translate(this.ViewProjectionMatrix, 0, 0, 0);
+        WorldMatrix = m4.xRotate(WorldMatrix, degToRad(this.Camera.Rotation.X));
+        WorldMatrix = m4.yRotate(WorldMatrix, degToRad(this.Camera.Rotation.Y));
+        WorldMatrix = m4.zRotate(WorldMatrix, degToRad(this.Camera.Rotation.Z));  
+        WorldMatrix = m4.translate(WorldMatrix, -this.Camera.Location.X, -this.Camera.Location.Y, -this.Camera.Location.Z); 
+        WorldMatrix = m4.zRotate(WorldMatrix, degToRad(z_rotation)); 
+        WorldMatrix = m4.translate(WorldMatrix, Location.X, Location.Y, Location.Z); 
         var ClipSpace = m4.transformVector(WorldMatrix, [0, 0, 0, 1]);
         ClipSpace[0] /= ClipSpace[3];
         ClipSpace[1] /= ClipSpace[3];

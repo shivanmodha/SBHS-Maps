@@ -9,6 +9,17 @@ var PreviousMousePosition = new Point(0, 0);
 var tmp_location;
 var tmp_rotation;
 var url_base
+var z_rotation = 0;
+var ico_b_f = new Image;
+var ico_b_m = new Image;
+var ico_c_a = new Image;
+var ico_c_b = new Image;
+var ico_m_o = new Image;
+var ico_l_a = new Image;
+var ico_g_a = new Image;
+var ico_l_m = new Image;
+var ico_l_f = new Image;
+var ico_c_y = new Image;
 function Main()
 {
     url = ParseURL();
@@ -30,7 +41,7 @@ function Main()
 function UpdateURL()
 {
     var url = "?floor=" + RenderedFloor + "&lox=" + ME.Camera.Location.X + "&loy=" + ME.Camera.Location.Y + "&loz=" + ME.Camera.Location.Z;
-    url += "&rox=" + ME.Camera.Rotation.X + "&roy=" + ME.Camera.Rotation.Y + "&roz=" + ME.Camera.Rotation.Z;
+    url += "&rox=" + ME.Camera.Rotation.X + "&roy=" + ME.Camera.Rotation.Y + "&roz=" + z_rotation;
     window.history.replaceState({"html": url}, "", url)
 }
 function ParseURL()
@@ -51,7 +62,7 @@ function ParseURL()
     var y = parseFloat(url_search.searchParams.get("loy"));
     if (!y) y = 50;
     var z = parseFloat(url_search.searchParams.get("loz"));
-    if (!z) z = 100;
+    if (!z) z = 60;
     tmp_location = new Vertex(x, y, z);
     x = parseFloat(url_search.searchParams.get("rox"));
     if (!x) x = 0;
@@ -59,13 +70,28 @@ function ParseURL()
     if (!y) y = 0;
     z = parseFloat(url_search.searchParams.get("roz"));
     if (!z) z = 0;
-    tmp_rotation = new Vertex(x, y, z);
+    tmp_rotation = new Vertex(x, y, 0);
+    z_rotation = z;
     return url;
+}
+function InitializeResources()
+{
+    ico_b_f.src = url + "icons/ico_b_f.png";
+    ico_b_m.src = url + "icons/ico_b_m.png";
+    ico_c_a.src = url + "icons/ico_c_a.png";
+    ico_c_b.src = url + "icons/ico_c_b.png";
+    ico_m_o.src = url + "icons/ico_m_o.png";
+    ico_l_a.src = url + "icons/ico_l_a.png";
+    ico_g_a.src = url + "icons/ico_g_a.png";
+    ico_l_m.src = url + "icons/ico_l_m.png";
+    ico_l_f.src = url + "icons/ico_l_f.png";
+    ico_c_y.src = url + "icons/ico_c_y.png";
 }
 function Initialize()
 {
     var source = "";
     var raw = new XMLHttpRequest();
+    InitializeResources();
     raw.open("GET", url + "map.ngm", false);
     raw.onreadystatechange = function()
     {
@@ -94,6 +120,7 @@ function Initialize()
         var b = 0;
         var type = "U";
         var name = JSONObject.nodes[i].friendly;
+        var fName = JSONObject.nodes[i].friendly;
         if (JSONObject.nodes[i].object.type == "WastedSpace")
         {
             ds = 0.8745;
@@ -123,7 +150,7 @@ function Initialize()
         }
         var offset = 0.01;
         var height = 0.5;
-        if (name == "" || name.includes("Library") || name.includes("208") || name.includes("Locker"))
+        if (name == "" || name.includes("Library") || name.includes("208 (F") || name.includes("208 E") || name.includes("Locker") || name.includes("C212") || name.includes("D102"))
         {
             offset = 0.0;
         }
@@ -137,10 +164,25 @@ function Initialize()
         }
         else if (name.includes("Bathroom"))
         {
-            r = 0.639;
-            g = 0.8;
-            b = 1;
+            if (fName.includes("(B)"))
+            {
+                r = 0.639;
+                g = 0.8;
+                b = 1;
+            }
+            else if (fName.includes("(G)"))
+            {
+                g = 0.639;
+                b = 0.8;
+                r = 1;
+            }
             height = 0.35;
+        }
+        else if (name.includes("Dark"))
+        {
+            r = 0.5;
+            g = 0.5;
+            b = 0.5;
         }
         var vertices = 
         [
@@ -260,7 +302,10 @@ function Event_Wheel(event)
 {
     var e = window.event || event;
 	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-    ME.Camera.Location.Z -= (delta * 2);
+    if (ME.Camera.Location.Z - (delta * 2) < 150 && ME.Camera.Location.Z - (delta * 2) > 10)
+    {
+        ME.Camera.Location.Z -= (delta * 2);
+    }
     UpdateURL();
 }
 function MainLoop()
@@ -275,8 +320,9 @@ function Update()
     {
         DeltaMouse = new Point(PreviousMousePosition.X - MousePosition.X, PreviousMousePosition.Y - MousePosition.Y);
         PreviousMousePosition = new Point(MousePosition.X, MousePosition.Y);
-        ME.Camera.Location.X += (DeltaMouse.X * 18) / (500 - ME.Camera.Location.Z);
-        ME.Camera.Location.Y -= (DeltaMouse.Y * 18) / (500 - ME.Camera.Location.Z);
+        ME.Camera.Location.X += DeltaMouse.X / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149));
+        ME.Camera.Location.Y -= DeltaMouse.Y / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149));
+        console.log((1236.984 * pow(ME.Camera.Location.Z, -0.9845149)));
     }
     for (var i = 0; i < Map[RenderedFloor].length; i++)
     {
@@ -297,16 +343,75 @@ function Update()
         }
     }
 }
+function DrawImage(image, projection)
+{
+    var scale = Math.pow(1.039, -ME.Camera.Location.Z + 135) + 10;
+    ME.Device2D.drawImage(image, projection.X - (scale / 2), projection.Y - (scale / 2), scale, scale);
+}
 function Render()
 {
     ME.Clear(0.875, 0.875, 0.875, 1);
+    var scale = parseInt((Math.pow(1.0293, -ME.Camera.Location.Z + 135) + 5));
+    ME.Device2D.font = scale.toString() + "px Calibri";
     for (var i = 0; i < Map[RenderedFloor].length; i++)
     {
+        Map[RenderedFloor][i].Revolution.Z = z_rotation;
         Map[RenderedFloor][i].Render(ME);
         var n = Map[RenderedFloor][i].name;
         if (n.includes("(h)") == false && n.includes("(s)") == false)
         {
-            Map_Labels[RenderedFloor][i].Render(ME);
+            var Projection = ME.ProjectVertex(Map_Labels[RenderedFloor][i].Location, z_rotation);
+            if (n.includes("Bathroom"))
+            {
+                if (n.includes("(B)"))
+                {
+                    DrawImage(ico_b_m, Projection);
+                }
+                else if (n.includes("(G)"))
+                {
+                    DrawImage(ico_b_f, Projection);
+                }
+            }
+            else if (n.includes("Cafeteria"))
+            {
+                DrawImage(ico_c_a, Projection);
+            }
+            else if (n.includes("Cafe"))
+            {
+                DrawImage(ico_c_b, Projection);
+            }
+            else if (n.includes("Main Office"))
+            {
+                DrawImage(ico_m_o, Projection);
+            }
+            else if (n.includes("Library"))
+            {
+                DrawImage(ico_l_a, Projection);
+            }
+            else if (n.includes("Gym"))
+            {
+                DrawImage(ico_g_a, Projection);
+            }
+            else if (n.includes("Locker Room"))
+            {
+                if (n.includes("Boys"))
+                {
+                    DrawImage(ico_l_m, Projection);
+                }
+                else if (n.includes("Girls"))
+                {
+                    DrawImage(ico_l_f, Projection);
+                }
+            }
+            else if (n.includes("Court"))
+            {
+                DrawImage(ico_c_y, Projection);
+            }
+            else
+            {
+                Map_Labels[RenderedFloor][i].Size.Y = scale;
+                Map_Labels[RenderedFloor][i].Render(ME, z_rotation);
+            }
         }
     }
 }

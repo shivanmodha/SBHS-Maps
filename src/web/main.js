@@ -25,6 +25,7 @@ var server = http.createServer(function (request, response)
                                     '.ico' : 'image/x-icon',
                                     '.jpg' : 'image/jpeg',
                                     '.png' : 'image/png',
+                                    '.svg' : 'image/svg',
                                     '.gif' : 'image/gif',
                                     '.css' : 'text/css',
                                     '.js' : 'text/javascript',
