@@ -335,7 +335,6 @@ function Update()
         PreviousMousePosition = new Point(MousePosition.X, MousePosition.Y);
         ME.Camera.Location.X += DeltaMouse.X / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149));
         ME.Camera.Location.Y -= DeltaMouse.Y / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149));
-        console.log((1236.984 * pow(ME.Camera.Location.Z, -0.9845149)));
     }
     for (var i = 0; i < Map[RenderedFloor].length; i++)
     {

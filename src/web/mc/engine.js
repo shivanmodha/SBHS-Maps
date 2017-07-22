@@ -92,6 +92,7 @@ var Engine = class Engine
         this.Device.enableVertexAttribArray(this.Shader_Program.vertexColorAttribute);
         this.Shader_Program.pMatrixUniform = this.Device.getUniformLocation(this.Shader_Program, "uPMatrix");
         this.Shader_Program.mvMatrixUniform = this.Device.getUniformLocation(this.Shader_Program, "uMVMatrix");
+        this.Shader_Program.oShadeUniform = this.Device.getUniformLocation(this.Shader_Program, "oShade");
         this.Device.clearColor(0.0, 0.0, 0.0, 1.0);
         this.Device.enable(this.Device.DEPTH_TEST);
         //this.ViewProjectionMatrix = mat4.create();
@@ -109,10 +110,11 @@ var Engine = class Engine
         this.Device2D.clearRect(0, 0, this.Device.drawingBufferWidth, this.Device.drawingBufferHeight);
         this.ViewProjectionMatrix = m4.perspective(degToRad(45), this.Device.viewportWidth / this.Device.viewportHeight, 0.1, 1000);
     }
-    SetShaderWorlds(WorldMatrix)
+    SetShaderWorlds(WorldMatrix, Shade)
     {
         this.Device.uniformMatrix4fv(this.Shader_Program.pMatrixUniform, false, this.ViewProjectionMatrix);
         this.Device.uniformMatrix4fv(this.Shader_Program.mvMatrixUniform, false, WorldMatrix);
+        this.Device.uniform4fv(this.Shader_Program.oShadeUniform, Shade);
     }
     GetDevice()
     {
@@ -342,7 +344,7 @@ var Object3D = class Object3D
         Device.bindBuffer(Device.ARRAY_BUFFER, this.ColorBuffer);
         Device.vertexAttribPointer(engine.Shader_Program.vertexColorAttribute, this.ColorBuffer.itemSize, Device.FLOAT, false, 0, 0);
         Device.bindBuffer(Device.ELEMENT_ARRAY_BUFFER, this.IndexBuffer);
-        engine.SetShaderWorlds(this.WorldMatrix);
+        engine.SetShaderWorlds(this.WorldMatrix, [1, 0, 0, 1]);
         var mode = Device.TRIANGLES;
         if (this.RenderMode === "WireFrame")
         {
