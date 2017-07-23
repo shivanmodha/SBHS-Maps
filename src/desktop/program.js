@@ -16,6 +16,7 @@ function event_create()
             show: false,
             title: "SBHS Maps",
         });
+    MainWindow.setMenu(null);
     MainWindow.loadURL(url.format(
         {
             pathname: path.join('index.html'),

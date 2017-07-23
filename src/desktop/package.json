@@ -2,10 +2,10 @@
   "name": "sbhs-maps-desktop",
   "version": "1.0.0",
   "description": "SBHS-Maps electron app",
-  "main": "main.js",
+  "main": "program.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron program.js"
+    "start": "electron ."
   },
   "author": "Shivan Modha",
   "license": "ISC",
