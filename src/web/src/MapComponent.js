@@ -11,7 +11,7 @@ class MapComponent extends Component
         };
         let url = "/mc/component.html?floor=" + this.props.floor + "&lox=" + this.props.x + "&loy=" + this.props.y + "&loz=" + this.props.z + "&rox=0&roy=0&roz=0";
         return (
-            <iframe id="MC" src={url} frameBorder="0" style={style}></iframe>
+            <iframe title="MC" id="MC" src={url} frameBorder="0" style={style}></iframe>
         );
     }
 }

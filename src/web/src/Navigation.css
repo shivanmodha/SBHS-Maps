@@ -1,0 +1,16 @@
+.mdl-layout__header
+{
+    background: transparent;
+    border: 0px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 400px;
+    box-shadow: none;
+}
+.mdl-layout__header-row
+{
+    box-shadow: 0px 1px 1px 1px black;
+    background: black;
+    height: 50px;
+}
