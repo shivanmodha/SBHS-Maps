@@ -11,11 +11,12 @@ class Navigation extends Component
                 <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
                     <header className="mdl-layout__header">
                         <div className="mdl-layout__header-row">
-                            <span className="mdl-layout-title">SBHS Maps</span>
-                            <div className="mdl-layout-spacer"></div>
+                            <div className="mdl-textfield mdl-js-textfield">
+                                <input className="mdl-textfield__input" type="text" id="sample1" />
+                            </div>
                         </div>
                     </header>
-                    <div className="mdl-layout__drawer">
+                    <div className="mdl-layout__drawer mdl-color-text--black">
                         <span className="mdl-layout-title">SBHS Maps</span>
                         <nav className="mdl-navigation">
                         </nav>

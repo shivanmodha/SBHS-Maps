@@ -10,7 +10,21 @@
 }
 .mdl-layout__header-row
 {
-    box-shadow: 0px 1px 1px 1px black;
-    background: black;
-    height: 50px;
+    box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.15);
+    background: white;
+    color: black;
+    height: 45px;
+    padding-left: 50px;
+}
+.mdl-layout__header-row i
+{
+    color: black;
+}
+.mdl-layout__drawer-button i
+{
+  color: black;
+}
+.mdl-layout__drawer-button
+{
+  margin: 0px;
 }
