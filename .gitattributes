@@ -1,0 +1,3 @@
+# Auto detect text fiels and perform LF normalization
+* text=auto
+src/web/public/mdl/* linguist-vendored
