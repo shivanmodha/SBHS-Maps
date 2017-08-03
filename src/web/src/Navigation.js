@@ -16,7 +16,7 @@ class Navigation extends Component
                             </button>
                             <div className="mdl-textfield mdl-js-textfield">
                                 <input className="mdl-textfield__input" type="text" id="searchbar" ></input>
-                                <label className="mdl-textfield__label" for="searchbar">Search SBHS Maps</label>
+                                <label className="mdl-textfield__label" htmlFor="searchbar">Search SBHS Maps</label>
                             </div>
                             <button className="mdl-button mdl-js-button mdl-button--icon">
                                 <i className="material-icons">search</i>

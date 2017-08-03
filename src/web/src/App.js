@@ -11,18 +11,18 @@ class App extends Component
     }
     componentWillMount()
     {
-        let at = this.props.at.split(",");
-        let last = at[2].split("z");
+        //let at = this.props.at.split(",");
+        //let last = at[2].split("z");
         this.setState(
         {
             width: window.innerWidth + "px",
             height: window.innerHeight + "px",
             args:
             {
-                x: at[0],
-                y: at[1],
-                z: last[0],
-                f: last[1] * 2
+                x: 50,
+                y: 50,
+                z: 50,
+                f: 0
             }
         });
     }

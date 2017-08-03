@@ -86,23 +86,23 @@ function ParseURL()
 }
 function InitializeResources()
 {
-    ico_b_f.src = url + "icons/ico_b_f.png";
-    ico_b_m.src = url + "icons/ico_b_m.png";
-    ico_c_a.src = url + "icons/ico_c_a.png";
-    ico_c_b.src = url + "icons/ico_c_b.png";
-    ico_m_o.src = url + "icons/ico_m_o.png";
-    ico_l_a.src = url + "icons/ico_l_a.png";
-    ico_g_a.src = url + "icons/ico_g_a.png";
-    ico_l_m.src = url + "icons/ico_l_m.png";
-    ico_l_f.src = url + "icons/ico_l_f.png";
-    ico_c_y.src = url + "icons/ico_c_y.png";
+    ico_b_f.src = url + "mc/icons/ico_b_f.png";
+    ico_b_m.src = url + "mc/icons/ico_b_m.png";
+    ico_c_a.src = url + "mc/icons/ico_c_a.png";
+    ico_c_b.src = url + "mc/icons/ico_c_b.png";
+    ico_m_o.src = url + "mc/icons/ico_m_o.png";
+    ico_l_a.src = url + "mc/icons/ico_l_a.png";
+    ico_g_a.src = url + "mc/icons/ico_g_a.png";
+    ico_l_m.src = url + "mc/icons/ico_l_m.png";
+    ico_l_f.src = url + "mc/icons/ico_l_f.png";
+    ico_c_y.src = url + "mc/icons/ico_c_y.png";
 }
 function Initialize()
 {
     var source = "";
     var raw = new XMLHttpRequest();
     InitializeResources();
-    raw.open("GET", url + "map.ngm", false);
+    raw.open("GET", "/mc/map.ngm", false);
     raw.onreadystatechange = function()
     {
         if (this.readyState == 4)
