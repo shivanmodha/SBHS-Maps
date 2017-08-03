@@ -20,6 +20,17 @@
 {
     color: black;
 }
+.mdl-textfield
+{
+    width: 270px;
+    margin-right: 7px;
+}
+.is-small-screen #drawer
+{
+    position: absolute;
+    top: -5px;
+    left: -4px;
+}
 .mdl-layout__drawer-button i
 {
   color: black;

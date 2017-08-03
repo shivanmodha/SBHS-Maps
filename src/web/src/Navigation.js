@@ -11,6 +11,9 @@ class Navigation extends Component
                 <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
                     <header className="mdl-layout__header">
                         <div className="mdl-layout__header-row">
+                            <button id="drawer" className="mdl-layout__drawer-button">
+                                <i className="material-icons">menu</i>
+                            </button>
                             <div className="mdl-textfield mdl-js-textfield">
                                 <input className="mdl-textfield__input" type="text" id="searchbar" ></input>
                                 <label className="mdl-textfield__label" for="searchbar">Search SBHS Maps</label>
@@ -20,7 +23,7 @@ class Navigation extends Component
                             </button>    
                             <button className="mdl-button mdl-js-button mdl-button--icon">
                                 <i className="material-icons">directions</i>
-                            </button>    
+                            </button>
                         </div>
                     </header>
                     <div className="mdl-layout__drawer mdl-color-text--black">

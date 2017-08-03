@@ -1,7 +1,9 @@
 # SBHS Map
-Google Maps, except for school. 
+_Google Maps, except for school_
 ## About
-(van|sh) studios, developed by Shivan Modha
-## Support
-* Android (OpenGL)
-* Web (WebGL)
+SBHS Maps is a virtual map for developed for South Brunswick High School.
+### Support
+* Web
+* Desktop
+* Android
+* iOS?
