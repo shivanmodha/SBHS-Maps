@@ -82,7 +82,7 @@ var Engine = class Engine
      * Creates and initializes a new rendering window for OpenGL
      * @param {Element} canvas 
      */
-    constructor(canvas2D, canvas, url)
+    constructor(canvas2D, canvas)
     {
         this.RenderingCanvas = canvas;
         this.Device = this.RenderingCanvas.getContext('webgl');

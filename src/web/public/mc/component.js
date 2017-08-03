@@ -35,7 +35,7 @@ function Main()
     window.addEventListener("DOMMouseScroll", Event_Wheel);
     var RC3 = document.getElementById("studios.vanish.mc.3D");
     var RC2 = document.getElementById("studios.vanish.mc.2D");
-    ME = new Engine(RC2, RC3, url);
+    ME = new Engine(RC2, RC3);
     ME.Camera.Location = tmp_location;
     ME.Camera.Rotation = tmp_rotation;
     UpdateURL();
@@ -44,13 +44,47 @@ function Main()
 }
 function UpdateURL()
 {
-    var url = "?floor=" + RenderedFloor + "&lox=" + ME.Camera.Location.X + "&loy=" + ME.Camera.Location.Y + "&loz=" + ME.Camera.Location.Z;
-    url += "&rox=" + ME.Camera.Rotation.X + "&roy=" + ME.Camera.Rotation.Y + "&roz=" + z_rotation;
+    var url = "@" + round(ME.Camera.Location.X, 2) + "," + round(ME.Camera.Location.Y, 2) + "," + round(ME.Camera.Location.Z, 2) + "z" + ((RenderedFloor / 2) + 1);
+    //var url = "?floor=" + RenderedFloor + "&lox=" + ME.Camera.Location.X + "&loy=" + ME.Camera.Location.Y + "&loz=" + ME.Camera.Location.Z;
+    //url += "&rox=" + ME.Camera.Rotation.X + "&roy=" + ME.Camera.Rotation.Y + "&roz=" + z_rotation;
     window.history.replaceState({"html": url}, "", url)
+}
+function round(num, p)
+{
+    return "" + parseFloat(Number(Math.round(num + 'e' + p) + 'e-' + p));
 }
 function ParseURL()
 {
     var url = document.URL;
+    if (url.includes("@"))
+    {
+        var paramstr = url.substring(url.indexOf("@") + 1);
+        var param = [];
+        while (paramstr.includes(","))
+        {
+            param.push(paramstr.substring(0, paramstr.indexOf(",")));
+            paramstr = paramstr.substring(paramstr.indexOf(",") + 1);
+        }
+        param.push(paramstr);
+        if (param.length == 3)
+        {
+            tmp_location = new Vertex(parseFloat(param[0]), parseFloat(param[1]), parseFloat(param[2].substring(0, param[2].indexOf("z"))));
+            tmp_rotation = new Vertex(0, 0, 0);
+            RenderedFloor = (parseInt(param[2].substring(param[2].indexOf("z") + 1)) - 1) * 2;
+        }
+        else
+        {
+            tmp_location = new Vertex(50, 50, 100);
+            tmp_rotation = new Vertex(0, 0, 0);
+            RenderedFloor = 0;
+        }
+    }
+    else
+    {
+        tmp_location = new Vertex(50, 50, 100);
+        tmp_rotation = new Vertex(0, 0, 0);
+        RenderedFloor = 0;        
+    }
     var url_search = new URL(url);
     url = url.substring(url.indexOf("/") + 1);
     if (url.includes("?")) url = url.substring(0, url.indexOf("?"));
@@ -59,7 +93,8 @@ function ParseURL()
     url_base = url_base.substring(url_base.indexOf("/"));
     url = url.substring(url.indexOf("/") + 1, url.lastIndexOf("/") + 1);
     url = url.substring(url.indexOf("/"));
-    RenderedFloor = parseInt(url_search.searchParams.get("floor"));
+
+    /*RenderedFloor = parseInt(url_search.searchParams.get("floor"));
     if (!RenderedFloor) RenderedFloor = 0;
     var x = parseFloat(url_search.searchParams.get("lox"));
     if (!x) x = 50;
@@ -81,7 +116,7 @@ function ParseURL()
     clrcol[2] = parseFloat(url_search.searchParams.get("bb"));
     if (!clrcol[2]) clrcol[2] = 0.875;
     tmp_rotation = new Vertex(x, y, 0);
-    z_rotation = z;
+    z_rotation = z;*/
     return url;
 }
 function InitializeResources()
