@@ -14,6 +14,12 @@ var Vertex = class Vertex
         this.Y = y;
         this.Z = z;
     }
+    Subtract(v)
+    {
+        this.X -= v.X;
+        this.Y -= v.Y;
+        this.Z -= v.Z;
+    }
 }
 var Camera = class Camera
 {

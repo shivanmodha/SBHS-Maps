@@ -1,53 +1,52 @@
-var ME;
-var Map = new Array(6);
-var Map_Labels = new Array(6);
-var RenderedFloor = 0;
-var MouseButton = 0;
-var MousePosition = new Point(0, 0);
-var DeltaMouse = new Point(0, 0);
-var PreviousMousePosition = new Point(0, 0);
-var tmp_location;
-var tmp_rotation;
-var url_base
-var z_rotation = 0;
-var ico_b_f = new Image;
-var ico_b_m = new Image;
-var ico_c_a = new Image;
-var ico_c_b = new Image;
-var ico_m_o = new Image;
-var ico_l_a = new Image;
-var ico_g_a = new Image;
-var ico_l_m = new Image;
-var ico_l_f = new Image;
-var ico_c_y = new Image;
-var clrcol = [0.875, 0.875, 0.875, 1];
+let ME;
+let Map = new Array(6);
+let Map_Labels = new Array(6);
+let RenderedFloor = 0;
+let MouseButton = 0;
+let MousePosition = new Point(0, 0);
+let DeltaMouse = new Point(0, 0);
+let PreviousMousePosition = new Point(0, 0);
+let tmp_location;
+let tmp_rotation;
+let url_base
+let z_rotation = 0;
+let ico_b_f = new Image;
+let ico_b_m = new Image;
+let ico_c_a = new Image;
+let ico_c_b = new Image;
+let ico_m_o = new Image;
+let ico_l_a = new Image;
+let ico_g_a = new Image;
+let ico_l_m = new Image;
+let ico_l_f = new Image;
+let ico_c_y = new Image;
+let clrcol = [0.875, 0.875, 0.875, 1];
+let param = [];
 function Main()
 {
     url = ParseURL();
-    window.addEventListener("mousedown", Event_Down);
-    window.addEventListener("touchstart", Event_TDown);
-    window.addEventListener("mouseup", Event_Up);
-    window.addEventListener("touchend", Event_Up);
-    window.addEventListener("mousemove", Event_Move);
-    window.addEventListener("mouseover", Event_Move);
-    window.addEventListener("touchmove", Event_TMove);
-    window.addEventListener("mousewheel", Event_Wheel);
-    window.addEventListener("DOMMouseScroll", Event_Wheel);
-    var RC3 = document.getElementById("studios.vanish.mc.3D");
-    var RC2 = document.getElementById("studios.vanish.mc.2D");
+    let RC3 = document.getElementById("studios.vanish.mc.3D");
+    let RC2 = document.getElementById("studios.vanish.mc.2D");
+    RC2.addEventListener("mousedown", Event_Down);
+    RC2.addEventListener("touchstart", Event_TDown);
+    RC2.addEventListener("mouseup", Event_Up);
+    RC2.addEventListener("touchend", Event_Up);
+    RC2.addEventListener("mousemove", Event_Move);
+    RC2.addEventListener("mouseover", Event_Move);
+    RC2.addEventListener("touchmove", Event_TMove);
+    RC2.addEventListener("mousewheel", Event_Wheel);
+    RC2.addEventListener("DOMMouseScroll", Event_Wheel);
     ME = new Engine(RC2, RC3);
     ME.Camera.Location = tmp_location;
     ME.Camera.Rotation = tmp_rotation;
-    UpdateURL();
     Initialize();
     MainLoop();
+    UpdateURL();
 }
 function UpdateURL()
 {
-    var url = "@" + round(ME.Camera.Location.X, 2) + "," + round(ME.Camera.Location.Y, 2) + "," + round(ME.Camera.Location.Z, 2) + "z" + ((RenderedFloor / 2) + 1);
-    //var url = "?floor=" + RenderedFloor + "&lox=" + ME.Camera.Location.X + "&loy=" + ME.Camera.Location.Y + "&loz=" + ME.Camera.Location.Z;
-    //url += "&rox=" + ME.Camera.Rotation.X + "&roy=" + ME.Camera.Rotation.Y + "&roz=" + z_rotation;
-    window.history.replaceState({"html": url}, "", url)
+    let url = "@" + round(ME.Camera.Location.X, 2) + "," + round(ME.Camera.Location.Y, 2) + "," + round(ME.Camera.Location.Z, 2) + "z" + ((RenderedFloor / 2) + 1);
+    window.history.replaceState({ "html": url }, "", url)
 }
 function round(num, p)
 {
@@ -55,11 +54,10 @@ function round(num, p)
 }
 function ParseURL()
 {
-    var url = document.URL;
+    let url = document.URL;
     if (url.includes("@"))
     {
-        var paramstr = url.substring(url.indexOf("@") + 1);
-        var param = [];
+        let paramstr = url.substring(url.indexOf("@") + 1);
         while (paramstr.includes(","))
         {
             param.push(paramstr.substring(0, paramstr.indexOf(",")));
@@ -74,18 +72,18 @@ function ParseURL()
         }
         else
         {
-            tmp_location = new Vertex(50, 50, 100);
+            tmp_location = new Vertex(0, 0, 100);
             tmp_rotation = new Vertex(0, 0, 0);
             RenderedFloor = 0;
         }
     }
     else
     {
-        tmp_location = new Vertex(50, 50, 100);
+        tmp_location = new Vertex(0, 0, 100);
         tmp_rotation = new Vertex(0, 0, 0);
         RenderedFloor = 0;        
     }
-    var url_search = new URL(url);
+    let url_search = new URL(url);
     url = url.substring(url.indexOf("/") + 1);
     if (url.includes("?")) url = url.substring(0, url.indexOf("?"));
     if (url.endsWith("/")) url = url.substring(0, url.length - 1);
@@ -93,30 +91,6 @@ function ParseURL()
     url_base = url_base.substring(url_base.indexOf("/"));
     url = url.substring(url.indexOf("/") + 1, url.lastIndexOf("/") + 1);
     url = url.substring(url.indexOf("/"));
-
-    /*RenderedFloor = parseInt(url_search.searchParams.get("floor"));
-    if (!RenderedFloor) RenderedFloor = 0;
-    var x = parseFloat(url_search.searchParams.get("lox"));
-    if (!x) x = 50;
-    var y = parseFloat(url_search.searchParams.get("loy"));
-    if (!y) y = 50;
-    var z = parseFloat(url_search.searchParams.get("loz"));
-    if (!z) z = 60;
-    tmp_location = new Vertex(x, y, z);
-    x = parseFloat(url_search.searchParams.get("rox"));
-    if (!x) x = 0;
-    y = parseFloat(url_search.searchParams.get("roy"));
-    if (!y) y = 0;
-    z = parseFloat(url_search.searchParams.get("roz"));
-    if (!z) z = 0;
-    clrcol[0] = parseFloat(url_search.searchParams.get("br"));
-    if (!clrcol[0]) clrcol[0] = 0.875;
-    clrcol[1] = parseFloat(url_search.searchParams.get("bg"));
-    if (!clrcol[1]) clrcol[1] = 0.875;
-    clrcol[2] = parseFloat(url_search.searchParams.get("bb"));
-    if (!clrcol[2]) clrcol[2] = 0.875;
-    tmp_rotation = new Vertex(x, y, 0);
-    z_rotation = z;*/
     return url;
 }
 function InitializeResources()
@@ -134,8 +108,8 @@ function InitializeResources()
 }
 function Initialize()
 {
-    var source = "";
-    var raw = new XMLHttpRequest();
+    let source = "";
+    let raw = new XMLHttpRequest();
     InitializeResources();
     raw.open("GET", "/mc/map.ngm", false);
     raw.onreadystatechange = function()
@@ -149,23 +123,23 @@ function Initialize()
         }
     }
     raw.send(null);
-    var JSONObject = JSON.parse(source);
-    for (var i = 0; i < 6; i++)
+    let JSONObject = JSON.parse(source);
+    for (let i = 0; i < 6; i++)
     {
         Map[i] = [];
         Map_Labels[i] = [];
     }
-    for (var i = 0; i < JSONObject.nodes.length; i++)
+    for (let i = 0; i < JSONObject.nodes.length; i++)
     {
-        var s = 0;
-        var ds = 0;
-        var a = 1;
-        var r = 0;
-        var g = 0;
-        var b = 0;
-        var type = "U";
-        var name = JSONObject.nodes[i].friendly;
-        var fName = JSONObject.nodes[i].friendly;
+        let s = 0;
+        let ds = 0;
+        let a = 1;
+        let r = 0;
+        let g = 0;
+        let b = 0;
+        let type = "U";
+        let name = JSONObject.nodes[i].friendly;
+        let fName = JSONObject.nodes[i].friendly;
         if (JSONObject.nodes[i].object.type == "WastedSpace")
         {
             ds = clrcol[0];
@@ -193,8 +167,8 @@ function Initialize()
             b = s;
             type = "P";
         }
-        var offset = 0.01;
-        var height = 0.5;
+        let offset = 0.01;
+        let height = 0.5;
         if (name == "" || name.includes("Library") || name.includes("208 (F") || name.includes("208 E") || name.includes("Locker") || name.includes("C212") || name.includes("D102") || name.includes("D104"))
         {
             offset = 0.0;
@@ -229,20 +203,20 @@ function Initialize()
             g = 0.5;
             b = 0.5;
         }
-        var vertices = 
+        let vertices = 
         [
             new GraphicsVertex(JSONObject.nodes[i].object.BL.x, JSONObject.nodes[i].object.BL.y, JSONObject.nodes[i].object.BL.z, ds, ds, ds, a),
             new GraphicsVertex(JSONObject.nodes[i].object.TL.x, JSONObject.nodes[i].object.TL.y, JSONObject.nodes[i].object.TL.z, ds, ds, ds, a),
             new GraphicsVertex(JSONObject.nodes[i].object.TR.x, JSONObject.nodes[i].object.TR.y, JSONObject.nodes[i].object.TR.z, ds, ds, ds, a),
             new GraphicsVertex(JSONObject.nodes[i].object.BR.x, JSONObject.nodes[i].object.BR.y, JSONObject.nodes[i].object.BR.z, ds, ds, ds, a),
         ];
-        var indices = 
+        let indices = 
         [
             new Index(0, 1, 2),
             new Index(0, 2, 3)
         ];
         if (type == "B")
-        {            
+        {
             vertices = 
             [
                 /**
@@ -313,9 +287,11 @@ function Initialize()
         {
             if (vertices[0].Z != -1)
             {
-                var floor = vertices[0].Z;
-                Map[floor].push(new Object3D(ME, vertices, indices, name));
-                var sendName = name;                
+                let floor = vertices[0].Z;
+                let obj = new Object3D(ME, vertices, indices, name);
+                obj.Location = new Vertex(-50, -50, -floor);
+                Map[floor].push(obj);
+                let sendName = name;                
                 if (name.indexOf("(") > 2)
                 {
                     sendName = name.substring(0, name.indexOf("("));
@@ -324,7 +300,22 @@ function Initialize()
                 {
                     sendName = "";
                 }
-                Map_Labels[floor].push(new Label(sendName, Map[floor][Map[floor].length - 1].GetCenterVertexPoint_HighZ(), 12));
+                let l = new Label(sendName, Map[floor][Map[floor].length - 1].GetCenterVertexPoint_HighZ(), 12);
+                l.Location.X += obj.Location.X;
+                l.Location.Y += obj.Location.Y;
+                l.Location.Z += obj.Location.Z;
+                Map_Labels[floor].push(l);
+
+                if (param.length == 1)
+                {
+                    if (param[0] != "" && param[0].toUpperCase() === sendName.toUpperCase())
+                    {
+                        ME.Camera.Location = obj.GetCenterVertexPoint_HighZ();
+                        ME.Camera.Location.X += obj.Location.X;
+                        ME.Camera.Location.Y += obj.Location.Y;
+                        ME.Camera.Location.Z = 25;
+                    }
+                }
             }
         }
     }
@@ -354,8 +345,8 @@ function Event_TMove(event)
 }
 function Event_Wheel(event)
 {
-    var e = window.event || event;
-	var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+    let e = window.event || event;
+	let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
     if (ME.Camera.Location.Z - (delta * 2) < 150 && ME.Camera.Location.Z - (delta * 2) > 10)
     {
         ME.Camera.Location.Z -= (delta * 2);
@@ -377,9 +368,9 @@ function Update()
         ME.Camera.Location.X += DeltaMouse.X / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149));
         ME.Camera.Location.Y -= DeltaMouse.Y / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149));
     }
-    var selected = false;
-    var scale = Math.pow(1.039, -ME.Camera.Location.Z + 135) + 10;
-    for (var i = 0; i < Map[RenderedFloor].length; i++)
+    let selected = false;
+    let scale = Math.pow(1.039, -ME.Camera.Location.Z + 135) + 10;
+    for (let i = 0; i < Map[RenderedFloor].length; i++)
     {
         Map_Labels[RenderedFloor][i].Update(ME, z_rotation);
         try
@@ -408,23 +399,23 @@ function Update()
 }
 function DrawImage(image, projection, i)
 {
-    var scale = Math.pow(1.039, -ME.Camera.Location.Z + 135) + 10;
+    let scale = Math.pow(1.039, -ME.Camera.Location.Z + 135) + 10;
     Map_Labels[RenderedFloor][i].Icon = true;
     ME.Device2D.drawImage(image, projection.X - (scale / 2), projection.Y - (scale / 2), scale, scale);
 }
 function Render()
 {
     ME.Clear(clrcol[0], clrcol[1], clrcol[2], clrcol[3]);
-    var scale = parseInt((Math.pow(1.0293, -ME.Camera.Location.Z + 135) + 5));
+    let scale = parseInt((Math.pow(1.0293, -ME.Camera.Location.Z + 135) + 5));
     ME.Device2D.font = scale.toString() + "px Calibri";
-    for (var i = 0; i < Map[RenderedFloor].length; i++)
+    for (let i = 0; i < Map[RenderedFloor].length; i++)
     {
         Map[RenderedFloor][i].Revolution.Z = z_rotation;
         Map[RenderedFloor][i].Render(ME);
-        var n = Map[RenderedFloor][i].name;
+        let n = Map[RenderedFloor][i].name;
         if (n.includes("(h)") == false && n.includes("(s)") == false)
         {
-            var Projection = ME.ProjectVertex(Map_Labels[RenderedFloor][i].Location, z_rotation);
+            let Projection = ME.ProjectVertex(Map_Labels[RenderedFloor][i].Location, z_rotation);
             if (n.includes("Bathroom"))
             {
                 if (n.includes("(B)"))

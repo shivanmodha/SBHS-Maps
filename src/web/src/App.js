@@ -30,7 +30,7 @@ class App extends Component
     {
         return (
             <div>
-                <MapComponent width={this.state.width} height={this.state.height} floor={this.state.args.f} x={this.state.args.x} y={this.state.args.y} z={this.state.args.z} />
+                <MapComponent />
             </div>
         );
     }

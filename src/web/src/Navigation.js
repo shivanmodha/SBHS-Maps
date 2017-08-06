@@ -14,13 +14,13 @@ class Navigation extends Component
                             <button id="drawer" className="mdl-layout__drawer-button">
                                 <i className="material-icons">menu</i>
                             </button>
-                            <div className="mdl-textfield mdl-js-textfield">
-                                <input className="mdl-textfield__input" type="text" id="searchbar" ></input>
-                                <label className="mdl-textfield__label" htmlFor="searchbar">Search SBHS Maps</label>
-                            </div>
-                            <button className="mdl-button mdl-js-button mdl-button--icon">
-                                <i className="material-icons">search</i>
-                            </button>    
+                                <div className="mdl-textfield mdl-js-textfield">
+                                <input className="mdl-textfield__input" type="text" id="searchbar" onKeyUp={this.Search}></input>
+                                    <label className="mdl-textfield__label" htmlFor="searchbar">Search SBHS Maps</label>
+                                </div>
+                                <button className="mdl-button mdl-js-button mdl-button--icon" onClick={this.Search_Click}>
+                                    <i className="material-icons">search</i>
+                                </button>
                             <button className="mdl-button mdl-js-button mdl-button--icon">
                                 <i className="material-icons">directions</i>
                             </button>
@@ -37,6 +37,17 @@ class Navigation extends Component
                 </div>
             </div>    
         );
+    }
+    Search_Click(event)
+    {
+        window.location.href = "@" + document.getElementById("searchbar").innerText;
+    }
+    Search(event)
+    {
+        if (event.keyCode === 13)
+        {
+            window.location.href = "@" + event.target.value;
+        }
     }
 }
 

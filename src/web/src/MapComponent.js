@@ -6,14 +6,16 @@ class MapComponent extends Component
     {
         let style =
         {
-            position: "absolute",        
+            position: "fixed",
             top: "0px",
-            left: "0px",    
-            width: this.props.width,
-            height: this.props.height
+            left: "0px",
+            width: "100%",
+            height: "100%",
+            padding: "0px",
+            margin: "0px",
+            border: "0px"
         };
         return (
-            /*<iframe title="MC" id="MC" src={url} frameBorder="0" style={style}></iframe>*/
             <div>
                 <canvas id="studios.vanish.mc.3D" style={style}></canvas>
                 <canvas id="studios.vanish.mc.2D" style={style}></canvas>
