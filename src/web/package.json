@@ -14,10 +14,10 @@
     },
     "scripts": {
         "start": "react-scripts start",
-        "build": "react-scripts build",
+        "build-react": "react-scripts build",
         "test": "react-scripts test --env=jsdom",
         "eject": "react-scripts eject",
-	    "build-strap": "build.bat"
+	    "build": "npm run dist --prefix src/bootstrap-4.0.0/ && build.bat"
     },
     "author": "Shivan Modha",
     "license": "ISC"
