@@ -7,13 +7,21 @@ class App extends Component
     {
         return (
             <Navbar color="faded" light toggleable>
-                <NavbarBrand href="/">reactstrap</NavbarBrand>
-                <Nav className="ml-auto" navbar>
+                <NavbarBrand>SBHS Maps</NavbarBrand>
+                <Nav tabs navbar>
                     <NavItem>
-                        <NavLink href="/components/">Components</NavLink>
+                        <NavLink active href="#">Components</NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink href="https://github.com/reactstrap/reactstrap">Github</NavLink>
+                        <NavLink href="#">Components</NavLink>
+                    </NavItem>
+                </Nav>
+                <Nav className="ml-auto" tabs navbar>
+                    <NavItem>
+                        <NavLink active href="#">Components</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink href="#">Components</NavLink>
                     </NavItem>
                 </Nav>
             </Navbar>
