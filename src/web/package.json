@@ -1,17 +1,19 @@
 {
-  "name": "sbhs-maps",
-  "version": "0.1.0",
-  "description": "SBHS Maps Web Portal",
-  "private": true,
-  "dependencies": {
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "react-scripts": "1.0.10"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
-  }
+    "name": "sbhs-maps-web",
+    "version": "2.0.0",
+    "description": "Google Maps, except for school",
+    "private": true,
+    "dependencies": {
+        "react": "^15.6.1",
+        "react-dom": "^15.6.1",
+        "react-scripts": "1.0.13"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test --env=jsdom",
+        "eject": "react-scripts eject"
+    },
+    "author": "Shivan Modha",
+    "license": "ISC"
 }
