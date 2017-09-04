@@ -5,14 +5,19 @@
     "private": true,
     "dependencies": {
         "react": "^15.6.1",
+        "react-addons-css-transition-group": "^15.6.0",
+        "react-addons-transition-group": "^15.6.0",
         "react-dom": "^15.6.1",
-        "react-scripts": "1.0.13"
+        "react-scripts": "1.0.13",
+        "react-transition-group": "^2.2.0",
+        "reactstrap": "^4.8.0"
     },
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test --env=jsdom",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+	    "build-strap": "build.bat"
     },
     "author": "Shivan Modha",
     "license": "ISC"
