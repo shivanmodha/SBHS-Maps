@@ -31,6 +31,7 @@ function Main()
     RC2.addEventListener("DOMMouseScroll", _event_onMouseWheel);
     window.addEventListener("_event_onZoomRoom", _event_onZoomRoom);
     window.addEventListener("_event_onQuery", _event_onQuery);
+    window.addEventListener("_event_onGetDirections", _event_onGetDirections);
     offsetY = RC2.style.top;
     offsetY = offsetY.substring(0, offsetY.length - 2);
     offsetY = parseInt(offsetY);
@@ -165,9 +166,9 @@ function _event_onQuery(event)
     let val = graph.GetAllElements(event.detail.query);
     event.detail.callback(val);
 }
-function _event_onZoomRoom(event)
+function getNode(txt)
 {
-    let element = graph.GetElement(event.detail.text);
+    let element = graph.GetElement(txt);
     let node = null;
     if (element != null)
     {
@@ -175,18 +176,33 @@ function _event_onZoomRoom(event)
     }
     else
     {
-        let elements = graph.GetAllElements(event.detail.text);
+        let elements = graph.GetAllElements(txt);
         if (elements.length > 0)
         {
             node = elements[0].Node;
         }
     }
+    return node;
+}
+function _event_onZoomRoom(event)
+{
+    let node = getNode(event.detail.text);
     if (node)
     {
         RenderedFloor = graph.GetFloor(node) + 1;
         graph.RenderedFloor = RenderedFloor;
         ME.Camera.Location = new Vertex(node.Location.X, node.Location.Y, node.Location.Z + 10);
         UpdateURL();
+    }
+    return node;
+}
+function _event_onGetDirections(event)
+{
+    let n1 = getNode(event.detail.loc1);
+    let n2 = getNode(event.detail.loc2);
+    if (n1 && n2)
+    {
+        graph.GetPath(n1, n2);
     }
 }
 function MainLoop()

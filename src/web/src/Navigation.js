@@ -16,7 +16,7 @@ class Navigation extends Component
         this._event_onPostQuery = this._event_onPostQuery.bind(this);
         this._event_onSearchKeyDown = this._event_onSearchKeyDown.bind(this);
 
-        this._render_borderRadius = this._render_borderRadius.bind(this);
+        this._render_BorderRadius = this._render_BorderRadius.bind(this);
         this._render_leftNavigation = this._render_leftNavigation.bind(this);
         this._render_leftBorder = this._render_leftBorder.bind(this);
         this._render_autoDrop = this._render_autoDrop.bind(this);
@@ -109,6 +109,10 @@ class Navigation extends Component
         {
             this._event_onZoomRoom();
             event.target.blur();
+            if (this.state.Directions)
+            {
+                document.getElementById("searchbar2").focus();
+            }
         }
         else if (event.keyCode === 40) //Down
         {
@@ -132,33 +136,33 @@ class Navigation extends Component
             DrawerIcon: this.DrawerIconClosed,
             Directions: false,
             DirectionsIcon: this.DirectionsIconClosed,
-            borderRadius: 0,
+            BorderRadius: 0,
             PlaceHolder: this.PlaceHolderRegular,
             DropDown: []
         });
     }
-    _render_borderRadius()
+    _render_BorderRadius()
     {
         if (this.state.Drawer || this.state.Directions)
         {
-            if (this.state.borderRadius < 10)
+            if (this.state.BorderRadius < 10)
             {
                 setTimeout(() =>
                 {
                     this.setState({
-                        borderRadius: this.state.borderRadius + 1
+                        BorderRadius: this.state.BorderRadius + 1
                     });
                 }, 10);
             }
         }
         else
         {
-            if (this.state.borderRadius > 0)
+            if (this.state.BorderRadius > 0)
             {
                 setTimeout(() =>
                 {
                     this.setState({
-                        borderRadius: this.state.borderRadius - 1
+                        BorderRadius: this.state.BorderRadius - 1
                     });
                 }, 10);
             }
@@ -171,7 +175,7 @@ class Navigation extends Component
         {
             return (
                 <InputGroupButton>
-                    <Button outline color="primary" active={this.state.Drawer} onClick={this._event_onMenuClick} style={{ paddingLeft: 0, paddingRight: 0, width: 50, paddingTop: 12, paddingBottom: 12, border: "none", borderBottomLeftRadius: 0, borderTopLeftRadius: this.state.borderRadius }}>
+                    <Button outline color="primary" active={this.state.Drawer} onClick={this._event_onMenuClick} style={{ paddingLeft: 0, paddingRight: 0, width: 50, paddingTop: 12, paddingBottom: 12, border: "none", borderBottomLeftRadius: 0, borderTopLeftRadius: this.state.BorderRadius }}>
                         <Icon name={this.state.DrawerIcon} size="lg" />
                     </Button>
                 </InputGroupButton>
@@ -180,7 +184,7 @@ class Navigation extends Component
         else
         {
             return (
-                <InputGroupAddon style={{ paddingLeft: 0, paddingRight: 0, width: 50, paddingTop: 12, paddingBottom: 12, border: "none", borderBottomLeftRadius: 0, borderTopLeftRadius: this.state.borderRadius }}>
+                <InputGroupAddon style={{ paddingLeft: 0, paddingRight: 0, width: 50, paddingTop: 12, paddingBottom: 12, border: "none", borderBottomLeftRadius: 0, borderTopLeftRadius: this.state.BorderRadius }}>
                     Start
                 </InputGroupAddon>
             );
@@ -274,8 +278,8 @@ class Navigation extends Component
             }}>
                 <div style={{
                     backgroundColor: "white",
-                    borderTopLeftRadius: this.state.borderRadius,
-                    borderTopRightRadius: this.state.borderRadius,
+                    borderTopLeftRadius: this.state.BorderRadius,
+                    borderTopRightRadius: this.state.BorderRadius,
                     boxShadow: "1px 1px 5px rgba(0, 0, 0, 0.25)"
                 }}>
                     <InputGroup style={{ border: "none" }}>
@@ -289,7 +293,7 @@ class Navigation extends Component
                         </InputGroupButton>
                         <InputGroupAddon style={{ padding: 0, width: 2, marginTop: 10, marginBottom: 10 }}></InputGroupAddon>
                         <InputGroupButton>
-                            <Button outline color="success" active={this.state.Directions} onClick={this._event_onDirectionsClick} style={{ padding: 0, width: 50, border: "none", borderBottomRightRadius: 0, borderTopRightRadius: this.state.borderRadius }}>
+                            <Button outline color="success" active={this.state.Directions} onClick={this._event_onDirectionsClick} style={{ padding: 0, width: 50, border: "none", borderBottomRightRadius: 0, borderTopRightRadius: this.state.BorderRadius }}>
                                 <Icon name={this.state.DirectionsIcon} />
                             </Button>
                         </InputGroupButton>
@@ -302,7 +306,7 @@ class Navigation extends Component
                 <Collapse isOpen={this.state.Directions} navbar>
                     <DirectionsDrawer />
                 </Collapse>
-                {this._render_borderRadius()}
+                {this._render_BorderRadius()}
             </div>
         );
     }
