@@ -143,7 +143,7 @@ let Graph = class Graph
                 }    
             }    
         }
-        for (let i = 0; i < this.Nodes.length; i++)
+        /*for (let i = 0; i < this.Nodes.length; i++)
         {
             if (this.NodeInFloor(this.Nodes[i]))
             {
@@ -237,7 +237,7 @@ let Graph = class Graph
                 ME.Device2D.fillStyle = '#000000';
                 ME.Device2D.strokeStyle = '#000000';
             }    
-        }
+        }*/
     }
     ToJson()
     {
