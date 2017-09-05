@@ -83,6 +83,7 @@ function ParseURL()
         tmp_rotation = new Vertex(0, 0, 0);
         RenderedFloor = 1;
     }
+    graph.RenderedFloor = RenderedFloor;
     let url_search = new URL(url);
     url = url.substring(url.indexOf("/") + 1);
     if (url.includes("?")) url = url.substring(0, url.indexOf("?"));
@@ -106,6 +107,9 @@ function Initialize()
                 source = raw.responseText;
                 let js = JSON.parse(source);
                 graph.FromJson(ME, js);
+                let s = graph.GetNode("B105");
+                let e = graph.GetNode("E200");
+                graph.GetPath(s, e);
             }
         }
     }
@@ -124,26 +128,6 @@ function _event_onMouseUp(event)
 {
     MouseButton = 0;
     UpdateURL();
-    if (!createNeighbor)
-    {
-        selectedNode = null;
-        selectedNodeIndex = -1;
-    }    
-    for (let i = 0; i < graph.Nodes.length; i++)
-    {
-        let child = graph.Nodes[i];
-        if (child.Hovered)
-        {
-            _event_onNodeSelect(child, i);
-        }
-        else
-        {
-            if (!createNeighbor)
-            {
-                child.Selected = false;
-            }    
-        }
-    }
 }
 function _event_onTouchUp(event)
 {
@@ -172,7 +156,7 @@ function _event_onTouchMove(event)
 function _event_onMouseWheel(event)
 {
     let e = window.event || event;
-    let speed = 0.1;
+    let speed = 1;
     let delta = Math.max(-speed, Math.min(speed, (e.wheelDelta || -e.detail)));
     ME.Camera.Location.Z -= (delta);
     UpdateURL();
@@ -197,17 +181,7 @@ function Render()
 {
     ME.Clear(clrcol[0], clrcol[1], clrcol[2], clrcol[3]);
     let scale = parseInt((Math.pow(1.0293, -ME.Camera.Location.Z + 135) + 5));
-    scale = 15;
     ME.Device2D.font = scale.toString() + "px Calibri";
-    ME.Device2D.lineWidth = 0.15;
-    ME.Device2D.beginPath();
-    ME.Device2D.moveTo(MousePosition.X, 0);
-    ME.Device2D.lineTo(MousePosition.X, ME.Device.viewportHeight);
-    ME.Device2D.stroke();
-    ME.Device2D.beginPath();
-    ME.Device2D.moveTo(0, MousePosition.Y);
-    ME.Device2D.lineTo(ME.Device.viewportWidth, MousePosition.Y);
-    ME.Device2D.stroke();
-    ME.Device2D.lineWidth = 0.3;
+    graph.Scale = scale;
     graph.Render(ME, 0);
 }    

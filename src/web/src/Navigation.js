@@ -149,7 +149,8 @@ class Navigation extends Component
                 <div style={{
                     backgroundColor: "white",
                     borderTopLeftRadius: this.state.borderRadius,
-                    borderTopRightRadius: this.state.borderRadius
+                    borderTopRightRadius: this.state.borderRadius,
+                    boxShadow: "1px 1px 5px rgba(0, 0, 0, 0.25)"
                 }}>
                     <InputGroup style={{ border: "none" }}>
                         {this._render_leftNavigation()}

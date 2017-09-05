@@ -8,6 +8,7 @@ let Graph = class Graph
         this.Floors = [
             ["Default", -100, 100]
         ];
+        this.Scale = 0;
     }
     CreateNode(_location)
     {
@@ -120,7 +121,7 @@ let Graph = class Graph
             if (this.Nodes[i].ProjectedLocation)
             {
                 return this.Nodes[i].ProjectedLocation.DistanceTo(point);
-            }    
+            }
             else
             {
                 return Number.MAX_SAFE_INTEGER;
@@ -140,104 +141,46 @@ let Graph = class Graph
                 if (this.Elements[i].Node != null && this.NodeInFloor(this.Elements[i].Node))
                 {
                     this.Elements[i].Render(ME);
-                }    
-            }    
-        }
-        /*for (let i = 0; i < this.Nodes.length; i++)
-        {
-            if (this.NodeInFloor(this.Nodes[i]))
-            {
-                let p = ME.ProjectVertex(this.Nodes[i].Location, z_rotation);
-                let selected = false;
-                if (this.SelectedPath)
-                {
-                    for (let j = 0; j < this.SelectedPath.length; j++)
+                    if (this.Elements[i].Type === "Room")
                     {
-                        if (this.SelectedPath[j] == this.Nodes[i])
+                        let p = ME.ProjectVertex(this.Elements[i].Object.Location, z_rotation);
+                        if (this.Elements[i].Name.includes("("))
                         {
-                            selected = true;
+                            let name = this.Elements[i].Name;
+                            ME.Device2D.textAlign = "center";
+                            ME.Device2D.fillText(name.substring(0, name.indexOf("(")), p.X, p.Y + (this.Scale / 8));
+                            ME.Device2D.font = (this.Scale / 2).toString() + "px Calibri";
+                            ME.Device2D.fillText(name.substring(name.indexOf("(") + 1, name.length - 1), p.X, p.Y + this.Scale);
+                            ME.Device2D.font = this.Scale.toString() + "px Calibri";
                         }
+                        else
+                        {
+                            ME.Device2D.textAlign = "center";
+                            ME.Device2D.fillText(this.Elements[i].Name, p.X, p.Y + (this.Scale / 2));
+                        }    
                     }
                 }
-                for (let j = 0; j < this.Nodes[i].Neighbors.length; j++)
-                {
-                    ME.Device2D.beginPath();
-                    ME.Device2D.moveTo(p.X, p.Y);
-                    let p1 = ME.ProjectVertex(this.Nodes[i].Neighbors[j].EndNode.Location, z_rotation);
-                    ME.Device2D.lineTo(p1.X, p1.Y);
-                    if (selected && this.NodeInList(this.Nodes[i].Neighbors[j].EndNode, this.SelectedPath))
-                    {
-                        ME.Device2D.strokeStyle = '#4682B4';
-                    }
-                    ME.Device2D.stroke();
-                    ME.Device2D.strokeStyle = '#000000';
-                }
-            }    
+            }
         }
-        for (let i = 0; i < this.Nodes.length; i++)
+        let p1 = ME.ProjectVertex(this.SelectedPath[1].Location, z_rotation);
+        ME.Device2D.strokeStyle = '#4682B4';
+        ME.Device2D.lineWidth = 5;
+        for (let i = 1; i < this.SelectedPath.length - 2; i++)
         {
-            let p = ME.ProjectVertex(this.Nodes[i].Location, z_rotation);
-            this.Nodes[i].ProjectedLocation = new Vertex(p.X, p.Y, p.Z);
-            if (this.NodeInFloor(this.Nodes[i]))
+            if (this.NodeInFloor(this.SelectedPath[i]))
             {
+                let p2 = ME.ProjectVertex(this.SelectedPath[i + 1].Location, z_rotation);
                 ME.Device2D.beginPath();
-                ME.Device2D.arc(p.X, p.Y, 5, 0, Math.PI * 2, true);
-                let selected = false;
-                let style = "#000000";
-                if (this.SelectedPath)
-                {
-                    for (let j = 0; j < this.SelectedPath.length; j++)
-                    {
-                        if (this.SelectedPath[j] == this.Nodes[i])
-                        {
-                            selected = true;
-                            if (j == 0)
-                            {
-                                style = '#9ACD32';
-                            }
-                            else if (j == this.SelectedPath.length - 1)
-                            {
-                                style = '#B22222';
-                            }
-                            else
-                            {
-                                style = '#4682B4';
-                            }
-                            break;
-                        }
-                    }
-                }
-                let sel = false;
-                if (this.Nodes[i].Selected == true)
-                {
-                    sel = true;
-                    style = '#FFA500';
-                }
-                else if (this.Nodes[i].Hovered == true)
-                {
-                    sel = true;
-                    style = '#C8A500';
-                }
-                if (sel || selected)
-                {
-                    ME.Device2D.fillStyle = style;
-                    ME.Device2D.fill();
-                }
-                else
-                {
-                    ME.Device2D.strokeStyle = style;
-                    ME.Device2D.stroke();
-                }
-                ME.Device2D.textAlign = "center";
-                let x = new Number(this.Nodes[i].Location.X).toFixed(1);
-                let y = new Number(this.Nodes[i].Location.Y).toFixed(1);
-                let z = new Number(this.Nodes[i].Location.Z).toFixed(1);
-                this.Nodes[i].Location = new Vertex(parseFloat(x), parseFloat(y), parseFloat(z));
-                ME.Device2D.fillText("'" + this.Nodes[i].Name + "' = (" + x + ", " + y + ", " + z + ")", p.X, p.Y + 20);
-                ME.Device2D.fillStyle = '#000000';
-                ME.Device2D.strokeStyle = '#000000';
-            }    
-        }*/
+                ME.Device2D.moveTo(p1.X, p1.Y);
+                ME.Device2D.lineTo(p2.X, p2.Y);
+                ME.Device2D.stroke();
+                p1 = p2;
+            }
+            else
+            {
+                p1 = ME.ProjectVertex(this.SelectedPath[i + 1].Location, z_rotation);
+            }
+        }
     }
     ToJson()
     {
@@ -250,7 +193,7 @@ let Graph = class Graph
         {
             let child = {
                 "name": this.Nodes[i].Name,
-                "id": this.Nodes[i].ID,                
+                "id": this.Nodes[i].ID,
                 "location": {
                     "x": this.Nodes[i].Location.X,
                     "y": this.Nodes[i].Location.Y,
@@ -264,7 +207,7 @@ let Graph = class Graph
                 child["neighbors"].push({
                     "distance": this.Nodes[i].Neighbors[j].Distance,
                     "end": this.Nodes[i].Neighbors[j].EndNode.ID,
-                });              
+                });
             }
             js["nodes"].push(child);
         }
@@ -292,7 +235,7 @@ let Graph = class Graph
                     this.Elements[i].Object.Vertices[j].R,
                     this.Elements[i].Object.Vertices[j].G,
                     this.Elements[i].Object.Vertices[j].B,
-                    this.Elements[i].Object.Vertices[j].A,                 
+                    this.Elements[i].Object.Vertices[j].A,
                 ]);
             }
             for (let j = 0; j < this.Elements[i].Object.Indices.length; j++)
@@ -339,7 +282,7 @@ let Graph = class Graph
             {
                 let c = js["elements"][i]["vertices"][j];
                 v.push(new GraphicsVertex(c[0], c[1], c[2], c[3], c[4], c[5], c[6]));
-            }    
+            }
             let ind = [];
             for (let j = 0; j < js["elements"][i]["indices"].length; j++)
             {
@@ -355,7 +298,7 @@ let Graph = class Graph
                     {
                         n.BindToNode(this.Nodes[k]);
                     }
-                }                    
+                }
             }
             this.Elements.push(n);
         }

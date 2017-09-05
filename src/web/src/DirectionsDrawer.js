@@ -11,7 +11,8 @@ class DirectionsDrawer extends Component
                 backgroundColor: "white",
                 marginTop: 5,
                 borderBottomLeftRadius: 10,
-                borderBottomRightRadius: 10
+                borderBottomRightRadius: 10,
+                boxShadow: "1px 1px 5px rgba(0, 0, 0, 0.25)"
             }}>
                 <InputGroup style={{ border: "none" }}>
                     <InputGroupAddon style={{ border: "none", paddingLeft: 0, paddingRight: 0, width: 50, paddingTop: 12, paddingBottom: 12, borderBottomLeftRadius: 10, borderTopLeftRadius: 0 }}>
