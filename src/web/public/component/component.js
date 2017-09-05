@@ -29,6 +29,8 @@ function Main()
     RC2.addEventListener("touchmove", _event_onTouchMove);
     RC2.addEventListener("mousewheel", _event_onMouseWheel);
     RC2.addEventListener("DOMMouseScroll", _event_onMouseWheel);
+    window.addEventListener("_event_onZoomRoom", _event_onZoomRoom);
+    window.addEventListener("_event_onQuery", _event_onQuery);
     offsetY = RC2.style.top;
     offsetY = offsetY.substring(0, offsetY.length - 2);
     offsetY = parseInt(offsetY);
@@ -107,9 +109,6 @@ function Initialize()
                 source = raw.responseText;
                 let js = JSON.parse(source);
                 graph.FromJson(ME, js);
-                let s = graph.GetNode("B105");
-                let e = graph.GetNode("E200");
-                graph.GetPath(s, e);
             }
         }
     }
@@ -160,6 +159,35 @@ function _event_onMouseWheel(event)
     let delta = Math.max(-speed, Math.min(speed, (e.wheelDelta || -e.detail)));
     ME.Camera.Location.Z -= (delta);
     UpdateURL();
+}
+function _event_onQuery(event)
+{
+    let val = graph.GetAllElements(event.detail.query);
+    event.detail.callback(val);
+}
+function _event_onZoomRoom(event)
+{
+    let element = graph.GetElement(event.detail.text);
+    let node = null;
+    if (element != null)
+    {
+        node = element.Node;
+    }
+    else
+    {
+        let elements = graph.GetAllElements(event.detail.text);
+        if (elements.length > 0)
+        {
+            node = elements[0].Node;
+        }
+    }
+    if (node)
+    {
+        RenderedFloor = graph.GetFloor(node) + 1;
+        graph.RenderedFloor = RenderedFloor;
+        ME.Camera.Location = new Vertex(node.Location.X, node.Location.Y, node.Location.Z + 10);
+        UpdateURL();
+    }
 }
 function MainLoop()
 {

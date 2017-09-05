@@ -26,6 +26,36 @@ let Graph = class Graph
         }
         return null;
     }
+    GetElement(_name)
+    {
+        for (let i = 0; i < this.Elements.length; i++)
+        {
+            if (this.Elements[i].Name === _name)
+            {
+                return this.Elements[i];
+            }
+        }
+        return null;
+    }
+    GetAllElements(_name)
+    {
+        let _return = [];
+        if (_name === "")
+        {
+            return _return;
+        }
+        for (let i = 0; i < this.Elements.length; i++)
+        {
+            if (this.Elements[i].Name.toLowerCase().includes(_name.toLowerCase()))
+            {
+                if (this.Elements[i].Type === "Room")
+                {
+                    _return.push(this.Elements[i]);
+                }    
+            }
+        }
+        return _return;
+    }
     RegisterNode(_node)
     {
         this.Nodes.push(_node);
@@ -95,6 +125,17 @@ let Graph = class Graph
         }
         this.SelectedPath.unshift(n);
     }
+    GetFloor(n)
+    {
+        for (let i = 0; i < this.Floors.length; i++)
+        {
+            if ((n.Location.Z > this.Floors[i][1]) && (n.Location.Z < this.Floors[i][2]))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
     NodeInFloor(n)
     {
         if (this.RenderedFloor - 1 >= this.Floors.length)
@@ -148,7 +189,7 @@ let Graph = class Graph
                         {
                             let name = this.Elements[i].Name;
                             ME.Device2D.textAlign = "center";
-                            ME.Device2D.fillText(name.substring(0, name.indexOf("(")), p.X, p.Y + (this.Scale / 8));
+                            ME.Device2D.fillText(name.substring(0, name.indexOf("(")), p.X, p.Y + (this.Scale / 2));
                             ME.Device2D.font = (this.Scale / 2).toString() + "px Calibri";
                             ME.Device2D.fillText(name.substring(name.indexOf("(") + 1, name.length - 1), p.X, p.Y + this.Scale);
                             ME.Device2D.font = this.Scale.toString() + "px Calibri";
@@ -162,25 +203,28 @@ let Graph = class Graph
                 }
             }
         }
-        let p1 = ME.ProjectVertex(this.SelectedPath[1].Location, z_rotation);
-        ME.Device2D.strokeStyle = '#4682B4';
-        ME.Device2D.lineWidth = 5;
-        for (let i = 1; i < this.SelectedPath.length - 2; i++)
+        if (this.SelectedPath && this.SelectedPath.length > 0)
         {
-            if (this.NodeInFloor(this.SelectedPath[i]))
+            let p1 = ME.ProjectVertex(this.SelectedPath[1].Location, z_rotation);
+            ME.Device2D.strokeStyle = '#4682B4';
+            ME.Device2D.lineWidth = 5;
+            for (let i = 1; i < this.SelectedPath.length - 2; i++)
             {
-                let p2 = ME.ProjectVertex(this.SelectedPath[i + 1].Location, z_rotation);
-                ME.Device2D.beginPath();
-                ME.Device2D.moveTo(p1.X, p1.Y);
-                ME.Device2D.lineTo(p2.X, p2.Y);
-                ME.Device2D.stroke();
-                p1 = p2;
+                if (this.NodeInFloor(this.SelectedPath[i]))
+                {
+                    let p2 = ME.ProjectVertex(this.SelectedPath[i + 1].Location, z_rotation);
+                    ME.Device2D.beginPath();
+                    ME.Device2D.moveTo(p1.X, p1.Y);
+                    ME.Device2D.lineTo(p2.X, p2.Y);
+                    ME.Device2D.stroke();
+                    p1 = p2;
+                }
+                else
+                {
+                    p1 = ME.ProjectVertex(this.SelectedPath[i + 1].Location, z_rotation);
+                }
             }
-            else
-            {
-                p1 = ME.ProjectVertex(this.SelectedPath[i + 1].Location, z_rotation);
-            }
-        }
+        }    
     }
     ToJson()
     {

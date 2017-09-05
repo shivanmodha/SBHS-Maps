@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Collapse, InputGroupButton, InputGroupAddon, InputGroup, Input, Button } from 'reactstrap';
+import { Collapse, InputGroupButton, InputGroupAddon, InputGroup, Input, Button, ButtonDropdown, DropdownMenu, DropdownItem } from 'reactstrap';
 import { Icon } from 'react-fa'
 import NavigationDrawer from './NavigationDrawer'
 import DirectionsDrawer from './DirectionsDrawer'
@@ -11,9 +11,15 @@ class Navigation extends Component
         super(props);
         this._event_onMenuClick = this._event_onMenuClick.bind(this);
         this._event_onDirectionsClick = this._event_onDirectionsClick.bind(this);
+        this._event_onZoomRoom = this._event_onZoomRoom.bind(this);
+        this._event_onQuery = this._event_onQuery.bind(this);
+        this._event_onPostQuery = this._event_onPostQuery.bind(this);
+        this._event_onSearchKeyDown = this._event_onSearchKeyDown.bind(this);
+
         this._render_borderRadius = this._render_borderRadius.bind(this);
         this._render_leftNavigation = this._render_leftNavigation.bind(this);
         this._render_leftBorder = this._render_leftBorder.bind(this);
+        this._render_autoDrop = this._render_autoDrop.bind(this);
 
         this.PlaceHolderRegular = "Search SBHS Maps";
         this.PlaceHolderDirections = "Choose Start..."
@@ -22,6 +28,19 @@ class Navigation extends Component
         this.DrawerIconOpened = "angle-up";
         this.DirectionsIconClosed = "map-marker";
         this.DirectionsIconOpened = "angle-up";
+
+        window.addEventListener("click", () =>
+        {
+            this.setState({
+                DropDown: []
+            });
+        });
+        window.addEventListener("keydown", function(e) {
+            // space and arrow keys
+            if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+                //e.preventDefault();
+            }
+        }, false);
     }
     _event_onMenuClick()
     {
@@ -32,7 +51,7 @@ class Navigation extends Component
         }
         else
         {
-            dirIcon = this.DrawerIconClosed;            
+            dirIcon = this.DrawerIconClosed;
         }
         this.setState({
             Drawer: !this.state.Drawer,
@@ -53,7 +72,7 @@ class Navigation extends Component
         }
         else
         {
-            dirIcon = this.DirectionsIconClosed;     
+            dirIcon = this.DirectionsIconClosed;
             pT = this.PlaceHolderRegular;
         }
         this.setState({
@@ -64,6 +83,48 @@ class Navigation extends Component
             PlaceHolder: pT
         });
     }
+    _event_onZoomRoom(event)
+    {
+        let txt = document.getElementById("searchbar1").value;
+        window.dispatchEvent(new CustomEvent("_event_onZoomRoom", { detail: { text: txt } }));
+        this.setState({
+            DropDown: []
+        });
+    }
+    _event_onQuery(event)
+    {
+        let txt = document.getElementById("searchbar1").value;
+        window.dispatchEvent(new CustomEvent("_event_onQuery", { detail: { query: txt, callback: this._event_onPostQuery } }));
+    }
+    _event_onPostQuery(event)
+    {
+        this.setState({
+            DropDown: event
+        });
+    }
+    _event_onSearchKeyDown(event)
+    {
+        this._event_onQuery();
+        if (event.keyCode === 13)
+        {
+            this._event_onZoomRoom();
+            event.target.blur();
+        }
+        else if (event.keyCode === 40) //Down
+        {
+            let id = document.getElementById("dropdown:0");
+            if (id)
+            {
+                id.focus();               
+                this.oldText = document.getElementById("searchbar1").value;
+                document.getElementById("searchbar1").value = this.state.DropDown[0].Name;
+                let container = document.getElementById("dropdown:container1");
+                container.scrollTop = 0;
+                container = document.getElementById("dropdown:container2");
+                container.scrollTop = 0;
+            }
+        }
+    }
     componentWillMount()
     {
         this.setState({
@@ -72,7 +133,8 @@ class Navigation extends Component
             Directions: false,
             DirectionsIcon: this.DirectionsIconClosed,
             borderRadius: 0,
-            PlaceHolder: this.PlaceHolderRegular
+            PlaceHolder: this.PlaceHolderRegular,
+            DropDown: []
         });
     }
     _render_borderRadius()
@@ -127,15 +189,79 @@ class Navigation extends Component
     _render_leftBorder()
     {
         if (!this.state.Directions)
+        {
+            return (
+                <InputGroupAddon style={{ padding: 0, width: 2, marginTop: 10, marginBottom: 10 }}></InputGroupAddon>
+            );
+        }
+        else
+        {
+            return null;
+        }
+    }
+    _render_autoDrop()
+    {
+        if (this.state.DropDown.length > 0)
+        {
+            let itms = [];
+            for (let i = 0; i < this.state.DropDown.length; i++)
             {
-                return (
-                    <InputGroupAddon style={{ padding: 0, width: 2, marginTop: 10, marginBottom: 10 }}></InputGroupAddon> 
-                );
+                itms.push(<DropdownItem id={"dropdown:" + i} onClick={() =>
+                {
+                    document.getElementById("searchbar1").value = this.state.DropDown[i].Name;
+                    this._event_onZoomRoom();
+                }} onKeyDown={(event) =>
+                {
+                    if (event.keyCode === 40)
+                    {
+                        let id = document.getElementById("dropdown:" + (i + 1));
+                        if (id)
+                        {
+                            id.focus();       
+                            document.getElementById("searchbar1").value = this.state.DropDown[i + 1].Name;
+                        }
+                    }
+                    else if (event.keyCode === 38)
+                    {
+                        let id = document.getElementById("dropdown:" + (i - 1));
+                        if (id)
+                        {
+                            id.focus();                
+                            document.getElementById("searchbar1").value = this.state.DropDown[i - 1].Name;
+                        }
+                        else
+                        {
+                            let txt = document.getElementById("searchbar1");
+                            txt.focus();
+                            document.getElementById("searchbar1").value = this.oldText;
+                        }
+                    }
+                }}>{ this.state.DropDown[i].Name }</DropdownItem >)
             }
-            else
-            {
-                return null;
-            }
+            return (                
+                <ButtonDropdown onKeyDown={(e) =>
+                {
+                    if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1)
+                    {
+                        e.preventDefault();
+                    }
+                }} id="dropdown:container1" style={{ position: "fixed", zIndex: 10, left: 60 }} isOpen={true}>
+                    <DropdownMenu onKeyDown={(e) =>
+                    {
+                        if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1)
+                        {
+                            e.preventDefault();
+                        }
+                    }} id="dropdown:container2" style={{ margin: 0, width: 282, maxHeight: 200, overflowX: "hidden", borderTop: "none", borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+                        {itms}
+                    </DropdownMenu>
+                </ButtonDropdown>
+            );
+        }
+        else
+        {
+            return null;
+        }
     }
     render()
     {
@@ -155,9 +281,9 @@ class Navigation extends Component
                     <InputGroup style={{ border: "none" }}>
                         {this._render_leftNavigation()}
                         {this._render_leftBorder()}
-                        <Input style={{ border: "none" }} placeholder={this.state.PlaceHolder} />
+                        <Input id="searchbar1" style={{ border: "none" }} placeholder={this.state.PlaceHolder} onClick={this._event_onQuery} onChange={this._event_onQuery} onKeyDown={this._event_onSearchKeyDown} />
                         <InputGroupButton>
-                            <Button outline color="primary" style={{ padding: 0, width: 50, border: "none" }}>
+                            <Button outline color="primary" style={{ padding: 0, width: 50, border: "none" }} onClick={this._event_onZoomRoom}>
                                 <Icon name="search" />
                             </Button>
                         </InputGroupButton>
@@ -169,6 +295,7 @@ class Navigation extends Component
                         </InputGroupButton>
                     </InputGroup>
                 </div>
+                {this._render_autoDrop()}
                 <Collapse isOpen={this.state.Drawer} navbar>
                     <NavigationDrawer />
                 </Collapse>
