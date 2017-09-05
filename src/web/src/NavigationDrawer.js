@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { ButtonGroup, Button } from 'reactstrap';
-
+import { ButtonGroup, Button, Navbar, Nav, NavItem, NavLink } from 'reactstrap';
+import { Icon } from 'react-fa';
 class NavigationDrawer extends Component
 {
     render()
@@ -14,12 +14,24 @@ class NavigationDrawer extends Component
                 borderBottomRightRadius: 10,
                 boxShadow: "1px 1px 5px rgba(0, 0, 0, 0.25)"
             }}>
-                <ButtonGroup>    
-                    <Button outline>iOS</Button>
-                    <Button outline>Android</Button>
-                    <Button outline>Desktop</Button>
-                </ButtonGroup>    
-            </div>    
+                <Nav tabs>
+                    <NavItem>
+                        <NavLink active href="#">Home</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink href="#">Options</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink href="#">About</NavLink>
+                    </NavItem>
+                    <Button outline style={{ marginLeft: 66, borderBottom: "none", borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}>
+                        <Icon name="download" />
+                    </Button>
+                </Nav>
+                <div style={{ backgroundColor: "white" }}>
+
+                </div>
+            </div>
         );
     }
 }

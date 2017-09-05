@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Collapse, InputGroupButton, InputGroupAddon, InputGroup, Input, Button, ButtonDropdown, DropdownMenu, DropdownItem } from 'reactstrap';
-import { Icon } from 'react-fa'
-import NavigationDrawer from './NavigationDrawer'
-import DirectionsDrawer from './DirectionsDrawer'
+import { Icon } from 'react-fa';
+import NavigationDrawer from './NavigationDrawer';
+import DirectionsDrawer from './DirectionsDrawer';
 
 class Navigation extends Component
 {

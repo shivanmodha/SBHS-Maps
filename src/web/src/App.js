@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Alert, UncontrolledAlert  } from 'reactstrap';
 import Navigation from './Navigation';
 import MapComponent from './MapComponent';
 
