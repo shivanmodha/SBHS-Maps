@@ -136,7 +136,29 @@ function _event_onTouchUp(event)
 function _event_onMouseMove(event)
 {
     MousePosition = new Point(event.clientX, event.clientY - offsetY);
-    for (let i = 0; i < graph.Nodes.length; i++)
+    for (let i = 0; i < graph.Elements.length; i++)
+    {
+        let child = graph.Elements[i];
+        if (child.Node != null)
+        {
+            if (graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0)) < child.Node.TextSize)
+            {
+                child.Object.ShadeR = 0.8;
+                child.Object.ShadeG = 0.8;
+                child.Object.ShadeB = 0.8;
+            }
+            else
+            {
+                if (child.Object.ShadeR != 1)
+                {
+                    child.Object.ShadeR = 1;
+                    child.Object.ShadeG = 1;
+                    child.Object.ShadeB = 1;
+                }
+            }
+        }    
+    }
+    /*for (let i = 0; i < graph.Nodes.length; i++)
     {
         let child = graph.Nodes[i];
         if (graph.DistanceToNode(i, new Vertex(MousePosition.X, MousePosition.Y, 0)) < 10)
@@ -147,7 +169,7 @@ function _event_onMouseMove(event)
         {
             graph.Nodes[i].Hovered = false;
         }
-    }
+    }*/
 }
 function _event_onTouchMove(event)
 {
@@ -230,4 +252,4 @@ function Render()
     ME.Device2D.font = scale.toString() + "px Calibri";
     graph.Scale = scale;
     graph.Render(ME, 0);
-}    
+}

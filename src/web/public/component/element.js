@@ -51,7 +51,7 @@ let Graph = class Graph
                 if (this.Elements[i].Type === "Room")
                 {
                     _return.push(this.Elements[i]);
-                }    
+                }
             }
         }
         return _return;
@@ -199,7 +199,7 @@ let Graph = class Graph
                                 {
                                     //_return.push(new DirectionInstruction(child.Name, "Straight", dist(current.Location, child.Location), "Straight to " + displayName));
                                 }
-                            }    
+                            }
                             else
                             {
                                 DestCall = true;
@@ -208,9 +208,9 @@ let Graph = class Graph
                         }
                     }
                     else if (ang < -StraightOffset)
-                    {                       
+                    {
                         _return.push(new DirectionInstruction(child.Name, "Left", dist(current.Location, child.Location), "Left " + verb + " " + displayName));
-                    }    
+                    }
                     else if (ang > StraightOffset)
                     {
                         _return.push(new DirectionInstruction(child.Name, "Right", dist(current.Location, child.Location), "Right " + verb + " " + displayName));
@@ -222,12 +222,12 @@ let Graph = class Graph
                     {
                         _return.push(new DirectionInstruction(child.Name, "Up", dist(current.Location, child.Location), "Up " + displayName));
                     }
-                }    
+                }
                 else if (current.Location.Z > child.Location.Z)
                 {
                     _return.push(new DirectionInstruction(child.Name, "Down", dist(current.Location, child.Location), "Down " + displayName));
                 }
-            }    
+            }
         }
         if (!DestCall)
         {
@@ -265,13 +265,13 @@ let Graph = class Graph
             return false;
         }
     }
-    DistanceToNode(i, point)
+    DistanceToNode(node, point)
     {
-        if (this.NodeInFloor(this.Nodes[i]))
+        if (this.NodeInFloor(node))
         {
-            if (this.Nodes[i].ProjectedLocation)
+            if (node.ProjectedLocation)
             {
-                return this.Nodes[i].ProjectedLocation.DistanceTo(point);
+                return node.ProjectedLocation.DistanceTo(point);
             }
             else
             {
@@ -282,6 +282,10 @@ let Graph = class Graph
         {
             return Number.MAX_SAFE_INTEGER;
         }
+    }
+    DistanceToNodeIndex(i, point)
+    {
+        DistanceToNode(this.Nodes[i], point);
     }
     Render(ME, z_rotation)
     {
@@ -295,6 +299,7 @@ let Graph = class Graph
                     if (this.Elements[i].Type === "Room")
                     {
                         let p = ME.ProjectVertex(this.Elements[i].Object.Location, z_rotation);
+                        this.Elements[i].Node.ProjectedLocation = p;
                         if (this.Elements[i].Name.includes("("))
                         {
                             let name = this.Elements[i].Name;
@@ -303,12 +308,14 @@ let Graph = class Graph
                             ME.Device2D.font = (this.Scale / 2).toString() + "px Calibri";
                             ME.Device2D.fillText(name.substring(name.indexOf("(") + 1, name.length - 1), p.X, p.Y + this.Scale);
                             ME.Device2D.font = this.Scale.toString() + "px Calibri";
+                            this.Elements[i].Node.TextSize = this.Scale * 1.25;
                         }
                         else
                         {
+                            this.Elements[i].Node.TextSize = this.Scale;
                             ME.Device2D.textAlign = "center";
                             ME.Device2D.fillText(this.Elements[i].Name, p.X, p.Y + (this.Scale / 2));
-                        }    
+                        }
                     }
                 }
             }
@@ -334,7 +341,7 @@ let Graph = class Graph
                     p1 = ME.ProjectVertex(this.SelectedPath[i + 1].Location, z_rotation);
                 }
             }
-        }    
+        }
     }
     ToJson()
     {

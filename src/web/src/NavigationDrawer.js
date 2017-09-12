@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ButtonGroup, Button, Navbar, Nav, NavItem, NavLink } from 'reactstrap';
+import { Button, Nav, NavItem, NavLink } from 'reactstrap';
 import { Icon } from 'react-fa';
 class NavigationDrawer extends Component
 {
