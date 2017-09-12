@@ -203,6 +203,8 @@ function _event_onGetDirections(event)
     if (n1 && n2)
     {
         graph.GetPath(n1, n2);
+        let directions = graph.GetDynamicDirections();
+        console.log(directions);
     }
 }
 function MainLoop()
