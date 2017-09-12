@@ -197,13 +197,13 @@ let Graph = class Graph
                                 console.log(_return[_return.length - 1].NodeName + " | " + child.Name);
                                 if (_return[_return.length - 1].NodeName !== child.Name)
                                 {
-                                    _return.push(new DirectionInstruction(child.Name, "Straight", dist(current.Location, child.Location), "Straight to " + displayName));
+                                    //_return.push(new DirectionInstruction(child.Name, "Straight", dist(current.Location, child.Location), "Straight to " + displayName));
                                 }
                             }    
                             else
                             {
                                 DestCall = true;
-                                _return.push(new DirectionInstruction(child.Name, "Straight", dist(current.Location, child.Location), "Destination Straight Ahead"));
+                                //_return.push(new DirectionInstruction(child.Name, "Straight", dist(current.Location, child.Location), "Destination Straight Ahead"));
                             }
                         }
                     }
