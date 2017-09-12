@@ -41,6 +41,7 @@ class Navigation extends Component
                 //e.preventDefault();
             }
         }, false);
+        window.addEventListener("_event_onElementClick", this._event_onMenuClick);
     }
     _event_onMenuClick()
     {

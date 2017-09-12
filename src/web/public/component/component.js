@@ -32,6 +32,8 @@ function Main()
     window.addEventListener("_event_onZoomRoom", _event_onZoomRoom);
     window.addEventListener("_event_onQuery", _event_onQuery);
     window.addEventListener("_event_onGetDirections", _event_onGetDirections);
+    window.addEventListener("_event_onZoomIn", _event_onZoomIn);
+    window.addEventListener("_event_onZoomOut", _event_onZoomOut);
     offsetY = RC2.style.top;
     offsetY = offsetY.substring(0, offsetY.length - 2);
     offsetY = parseInt(offsetY);
@@ -119,6 +121,24 @@ function _event_onMouseDown(event)
 {
     MouseButton = 1;
     PreviousMousePosition = new Point(event.clientX, event.clientY - offsetY);
+    for (let i = 0; i < graph.Elements.length; i++)
+    {
+        let child = graph.Elements[i];
+        if (child.Node != null)
+        {
+            if (child.Type === "Room")
+            {
+                if (graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0)) < child.Node.TextSize)
+                {
+                    graph.Elements[i]._on_down_ = true;
+                }
+                else
+                {
+                    graph.Elements[i]._on_down_ = false;
+                }
+            }
+        }
+    }
 }
 function _event_onTouchDown(event)
 {
@@ -127,6 +147,20 @@ function _event_onTouchDown(event)
 function _event_onMouseUp(event)
 {
     MouseButton = 0;
+    for (let i = 0; i < graph.Elements.length; i++)
+    {
+        let child = graph.Elements[i];
+        if (child.Node != null)
+        {
+            if (child.Type === "Room")
+            {
+                if (graph.Elements[i]._on_down_)
+                {
+                    window.dispatchEvent(new CustomEvent("_event_onElementClick", { detail: { element: child } }));
+                }
+            }
+        }
+    }
     UpdateURL();
 }
 function _event_onTouchUp(event)
@@ -156,20 +190,8 @@ function _event_onMouseMove(event)
                     child.Object.ShadeB = 1;
                 }
             }
-        }    
+        }
     }
-    /*for (let i = 0; i < graph.Nodes.length; i++)
-    {
-        let child = graph.Nodes[i];
-        if (graph.DistanceToNode(i, new Vertex(MousePosition.X, MousePosition.Y, 0)) < 10)
-        {
-            graph.Nodes[i].Hovered = true;
-        }
-        else
-        {
-            graph.Nodes[i].Hovered = false;
-        }
-    }*/
 }
 function _event_onTouchMove(event)
 {
@@ -228,6 +250,40 @@ function _event_onGetDirections(event)
         let directions = graph.GetDynamicDirections();
         console.log(directions);
     }
+}
+function _event_onZoomIn(event)
+{
+    let times = 0;
+    let i = () =>
+    {
+        setTimeout(() =>
+        {
+            ME.Camera.Location.Z -= 1;
+            times++;
+            if (times < 10)
+            {
+                i();
+            }
+        }, 1);
+    };
+    i();
+}
+function _event_onZoomOut(event)
+{
+    let times = 0;
+    let i = () =>
+    {
+        setTimeout(() =>
+        {
+            ME.Camera.Location.Z += 1;
+            times++;
+            if (times < 10)
+            {
+                i();
+            }
+        }, 1);
+    };
+    i();
 }
 function MainLoop()
 {
