@@ -2,17 +2,56 @@ import React, { Component } from 'react';
 import Navigation from './Navigation';
 import MapComponent from './MapComponent';
 import Zoom from './Zoom';
+import ContextMenu from './ContextMenu';
 class App extends Component
 {
     constructor(props)
     {
         super(props);
         this._event_onElementClick = this._event_onElementClick.bind(this);
-        window.addEventListener("_event_onElementClick", this._event_onElementClick);
+        this._render_ContextMenu = this._render_ContextMenu.bind(this);
     }
     _event_onElementClick(event)
     {
         let element = event.detail.element;	
+    }
+    _render_ContextMenu()
+    {
+        if (this.state.CM)
+        {
+            return (
+                <ContextMenu left={this.state.left} top={this.state.top}/>
+            );
+        }
+        else if (!this.state.CM) {
+            return null;
+        }
+    }
+    componentWillMount()
+    {
+        this.setState({
+            CM: false
+        });
+    }
+    componentDidMount()
+    {
+        let RC2 = document.getElementById("studios.vanish.component.2D");
+        RC2.addEventListener("_event_onElementClick", this._event_onElementClick);
+        RC2.addEventListener("contextmenu", (e) =>
+        {
+            e.preventDefault();
+            this.setState({
+                CM: true,
+                left: e.offsetX,
+                top: e.offsetY
+            });
+        });
+        window.addEventListener("click", () =>
+        {
+            this.setState({
+                CM: false
+            });
+        });        
     }
     render()
     {
@@ -21,6 +60,7 @@ class App extends Component
                 <MapComponent />
                 <Navigation />
                 <Zoom />
+                {this._render_ContextMenu()}
             </div>
         );
     }

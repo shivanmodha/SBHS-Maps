@@ -34,6 +34,8 @@ function Main()
     window.addEventListener("_event_onGetDirections", _event_onGetDirections);
     window.addEventListener("_event_onZoomIn", _event_onZoomIn);
     window.addEventListener("_event_onZoomOut", _event_onZoomOut);
+    window.addEventListener("_event_onFloorUp", _event_onFloorUp);
+    window.addEventListener("_event_onFloorDown", _event_onFloorDown);
     offsetY = RC2.style.top;
     offsetY = offsetY.substring(0, offsetY.length - 2);
     offsetY = parseInt(offsetY);
@@ -264,7 +266,7 @@ function _event_onZoomIn(event)
             {
                 i();
             }
-        }, 1);
+        }, 10);
     };
     i();
 }
@@ -281,9 +283,29 @@ function _event_onZoomOut(event)
             {
                 i();
             }
-        }, 1);
+        }, 10);
     };
     i();
+}
+function _event_onFloorUp(event)
+{
+    RenderedFloor += 1;
+    if (RenderedFloor === 4)
+    {
+        RenderedFloor = 3;
+    }
+    graph.RenderedFloor = RenderedFloor;
+    UpdateURL();
+}
+function _event_onFloorDown(event)
+{
+    RenderedFloor -= 1;
+    if (RenderedFloor === 0)
+    {
+        RenderedFloor = 1;
+    }
+    graph.RenderedFloor = RenderedFloor;
+    UpdateURL();
 }
 function MainLoop()
 {

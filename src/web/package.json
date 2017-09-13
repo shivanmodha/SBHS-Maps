@@ -15,7 +15,7 @@
     },
     "scripts": {
         "start": "react-scripts start",
-        "build-react": "react-scripts build",
+        "deploy": "react-scripts build",
         "test": "react-scripts test --env=jsdom",
         "eject": "react-scripts eject",
         "build": "grunt dist --base src/bootstrap-4.0.0/ --gruntfile src/bootstrap-4.0.0/GruntFile.js && build.bat"
