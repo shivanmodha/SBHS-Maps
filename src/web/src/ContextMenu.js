@@ -19,10 +19,12 @@ class ContextMenu extends Component
                     <DropdownItem>Test</DropdownItem>
                     <DropdownItem>Test</DropdownItem>
                     <DropdownItem divider />
-                    <DropdownItem header style={{ textAlign: "left" }}>
-                        <Button color="secondary" style={{ margin: 0, padding: 0, borderRadius: 0, border: "none", width: 40, height: 25 }} outline><Icon name="minus" /></Button>
+                    <DropdownItem header style={{ textAlign: "left", paddingRight: 0 }}>
                         Zoom
-                        <Button color="secondary" style={{ margin: 0, padding: 0, borderRadius: 0, border: "none", width: 40, height: 25 }} outline><Icon name="plus" /></Button>
+                        <div style={{ display: "inline", textAlign: "right", width: 300, margin: 0, padding: 0, right: 0, backgroundColor: "red" }}>
+                            <Button color="secondary" style={{ margin: 0, padding: 0, borderRadius: 0, border: "none", width: 40, height: 25 }} outline><Icon name="plus" /></Button>
+                            <Button color="secondary" style={{ margin: 0, padding: 0, borderRadius: 0, border: "none", width: 40, height: 25 }} outline><Icon name="minus" /></Button>
+                        </div>
                     </DropdownItem>
                     <DropdownItem>Nearest Room</DropdownItem>
                     <DropdownItem divider />
