@@ -15,6 +15,7 @@ class Navigation extends Component
         this._event_onQuery = this._event_onQuery.bind(this);
         this._event_onPostQuery = this._event_onPostQuery.bind(this);
         this._event_onSearchKeyDown = this._event_onSearchKeyDown.bind(this);
+        this._event_onPostSetDirection = this._event_onPostSetDirection.bind(this);
 
         this._render_BorderRadius = this._render_BorderRadius.bind(this);
         this._render_leftNavigation = this._render_leftNavigation.bind(this);
@@ -29,6 +30,7 @@ class Navigation extends Component
         this.DirectionsIconClosed = "map-marker";
         this.DirectionsIconOpened = "angle-up";
 
+        window.addEventListener("_event_onPostSetDirection", this._event_onPostSetDirection);
         window.addEventListener("click", () =>
         {
             this.setState({
@@ -83,6 +85,13 @@ class Navigation extends Component
             DirectionsIcon: dirIcon,
             PlaceHolder: pT
         });
+    }
+    _event_onPostSetDirection()
+    {
+        if (!this.state.Directions)
+        {
+            this._event_onDirectionsClick();
+        }    
     }
     _event_onZoomRoom(event)
     {

@@ -64,8 +64,11 @@ class DirectionsDrawer extends Component
     }
     _event_onGetDirections(event)
     {
-        window.dispatchEvent(new CustomEvent("_event_onGetDirections", { detail: { loc1: document.getElementById("searchbar1").value, loc2: document.getElementById("searchbar2").value } }));
-    }
+        if (document.getElementById("searchbar1").value !== document.getElementById("searchbar2").value)
+        {
+            window.dispatchEvent(new CustomEvent("_event_onGetDirections", { detail: { loc1: document.getElementById("searchbar1").value, loc2: document.getElementById("searchbar2").value } }));
+        }
+    }    
     componentWillMount()
     {
         this.setState({

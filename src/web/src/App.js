@@ -13,7 +13,15 @@ class App extends Component
     }
     _event_onElementClick(event)
     {
-        let element = event.detail.element;	
+        //let element = event.detail.element;	
+        if (event.detail.button === 0)
+        {
+            this.setState({
+                CM: true,
+                left: event.detail.offsetX,
+                top: event.detail.offsetY
+            });
+        }
     }
     _render_ContextMenu()
     {
@@ -36,7 +44,7 @@ class App extends Component
     componentDidMount()
     {
         let RC2 = document.getElementById("studios.vanish.component.2D");
-        RC2.addEventListener("_event_onElementClick", this._event_onElementClick);
+        window.addEventListener("_event_onElementClick", this._event_onElementClick);
         RC2.addEventListener("contextmenu", (e) =>
         {
             e.preventDefault();

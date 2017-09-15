@@ -36,6 +36,8 @@ function Main()
     window.addEventListener("_event_onZoomOut", _event_onZoomOut);
     window.addEventListener("_event_onFloorUp", _event_onFloorUp);
     window.addEventListener("_event_onFloorDown", _event_onFloorDown);
+    window.addEventListener("_event_onSetFloor", _event_onSetFloor);
+    window.addEventListener("_event_onSetDirection", _event_onSetDirection);
     offsetY = RC2.style.top;
     offsetY = offsetY.substring(0, offsetY.length - 2);
     offsetY = parseInt(offsetY);
@@ -156,9 +158,9 @@ function _event_onMouseUp(event)
         {
             if (child.Type === "Room")
             {
-                if (graph.Elements[i]._on_down_)
+                if (graph.Elements[i]._on_down_ && (graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0)) < child.Node.TextSize))
                 {
-                    window.dispatchEvent(new CustomEvent("_event_onElementClick", { detail: { element: child } }));
+                    window.dispatchEvent(new CustomEvent("_event_onElementClick", { detail: { button: event.button, element: child, offsetX: event.offsetX, offsetY: event.offsetY } }));
                 }
             }
         }
@@ -306,6 +308,42 @@ function _event_onFloorDown(event)
     }
     graph.RenderedFloor = RenderedFloor;
     UpdateURL();
+}
+function _event_onSetFloor(event)
+{
+    RenderedFloor = event.detail.floor;
+    graph.RenderedFloor = RenderedFloor;
+    UpdateURL();
+}
+function _event_onSetDirection(event)
+{
+    let min = Number.MAX_SAFE_INTEGER;
+    let element = null;
+    for (let i = 0; i < graph.Elements.length; i++)
+    {
+        let child = graph.Elements[i];
+        if (child.Node != null)
+        {
+            if (child.Type === "Room")
+            {
+                let dis = graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0));
+                if (dis < min)
+                {
+                    min = dis;
+                    element = child;
+                }
+            }
+        }
+    }
+    if (event.detail.dir === "from")
+    {
+        document.getElementById("searchbar1").value = element.Name;
+    }
+    else if (event.detail.dir === "to")
+    {
+        document.getElementById("searchbar2").value = element.Name;
+        window.dispatchEvent(new CustomEvent("_event_onPostSetDirection", {}));
+    }    
 }
 function MainLoop()
 {
