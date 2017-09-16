@@ -174,20 +174,59 @@ function _event_onTouchUp(event)
 function _event_onMouseMove(event)
 {
     MousePosition = new Point(event.clientX, event.clientY - offsetY);
+    _event_onUpdateColors();
+}
+function _event_onUpdateColors() 
+{
+    let run = true;
     for (let i = 0; i < graph.Elements.length; i++)
     {
         let child = graph.Elements[i];
+        run = true;
         if (child.Node != null)
         {
             if (graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0)) < child.Node.TextSize)
             {
-                child.Object.ShadeR = 0.8;
-                child.Object.ShadeG = 0.8;
-                child.Object.ShadeB = 0.8;
+                if (graph.SelectedPath && graph.SelectedPath.length > 0)
+                {
+                    if (child === graph.GetElementByNodeID(graph.SelectedPath[0].ID))
+                    {
+                        run = false;
+                        child.Object.ShadeG = 0.6;
+                    }
+                    else if (child === graph.GetElementByNodeID(graph.SelectedPath[graph.SelectedPath.length - 1].ID))
+                    {
+                        run = false;
+                        child.Object.ShadeR = 0.8;
+                    }
+                }
+                if (run)
+                {
+                    child.Object.ShadeR = 0.8;
+                    child.Object.ShadeG = 0.8;
+                    child.Object.ShadeB = 0.8;
+                }
             }
             else
             {
-                if (child.Object.ShadeR != 1)
+                if (graph.SelectedPath && graph.SelectedPath.length > 0)
+                {
+                    if (child === graph.GetElementByNodeID(graph.SelectedPath[0].ID))
+                    {
+                        run = false;
+                        child.Object.ShadeR = 146 / 255;
+                        child.Object.ShadeG = 204 / 255;
+                        child.Object.ShadeB = 065 / 255;
+                    }
+                    else if (child === graph.GetElementByNodeID(graph.SelectedPath[graph.SelectedPath.length - 1].ID))
+                    {
+                        run = false;
+                        child.Object.ShadeR = 255 / 255;
+                        child.Object.ShadeG = 157 / 255;
+                        child.Object.ShadeB = 133 / 255;
+                    }
+                }
+                if (run)
                 {
                     child.Object.ShadeR = 1;
                     child.Object.ShadeG = 1;
@@ -196,7 +235,7 @@ function _event_onMouseMove(event)
             }
         }
     }
-}
+}    
 function _event_onTouchMove(event)
 {
 
@@ -252,6 +291,7 @@ function _event_onGetDirections(event)
     {
         graph.GetPath(n1, n2);
         let directions = graph.GetDynamicDirections();
+        _event_onUpdateColors();
         console.log(directions);
     }
 }
