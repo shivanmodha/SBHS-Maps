@@ -1,3 +1,9 @@
+let __DEFAULT_ICON_C_Y__ = new Image();
+__DEFAULT_ICON_C_Y__.src = "/component/icons/ico_c_y.png";
+let __DEFAULT_ICON_B_F__ = new Image();
+__DEFAULT_ICON_B_F__.src = "/component/icons/ico_b_f.png";
+let __DEFAULT_ICON_B_M__ = new Image();
+__DEFAULT_ICON_B_M__.src = "/component/icons/ico_b_m.png";
 let Graph = class Graph
 {
     constructor()
@@ -34,6 +40,20 @@ let Graph = class Graph
             {
                 return this.Elements[i];
             }
+        }
+        return null;
+    }
+    GetElementByNodeID(_id)
+    {
+        for (let i = 0; i < this.Elements.length; i++)
+        {
+            if (this.Elements[i].Node)
+            {
+                if (this.Elements[i].Node.ID === _id)
+                {
+                    return this.Elements[i];
+                }
+            }    
         }
         return null;
     }
@@ -289,6 +309,7 @@ let Graph = class Graph
     }
     Render(ME, z_rotation)
     {
+        let scale = Math.pow(1.039, -ME.Camera.Location.Z + 135) + 10;
         for (let i = 0; i < this.Elements.length; i++)
         {
             if (this.Elements[i].Node != null)
@@ -316,6 +337,25 @@ let Graph = class Graph
                             ME.Device2D.textAlign = "center";
                             ME.Device2D.fillText(this.Elements[i].Name, p.X, p.Y + (this.Scale / 2));
                         }
+                    }
+                    else if (this.Elements[i].Type === "Court Yard")
+                    {
+                        let p = ME.ProjectVertex(this.Elements[i].Object.Location, z_rotation);
+                        this.Elements[i].Node.ProjectedLocation = p;
+                        ME.Device2D.drawImage(__DEFAULT_ICON_C_Y__, p.X - (scale / 2), p.Y - (scale / 2), scale, scale);
+                    }
+                    else if (this.Elements[i].Type === "Bathroom")
+                    {
+                        let p = ME.ProjectVertex(this.Elements[i].Object.Location, z_rotation);
+                        this.Elements[i].Node.ProjectedLocation = p;
+                        if (this.Elements[i].Name.includes("(G)"))
+                        {
+                            ME.Device2D.drawImage(__DEFAULT_ICON_B_F__, p.X - (scale / 2), p.Y - (scale / 2), scale, scale);
+                        }    
+                        else if (this.Elements[i].Name.includes("(B)"))
+                        {
+                            ME.Device2D.drawImage(__DEFAULT_ICON_B_M__, p.X - (scale / 2), p.Y - (scale / 2), scale, scale);
+                        }    
                     }
                 }
             }

@@ -32,6 +32,12 @@ function Main()
     window.addEventListener("_event_onZoomRoom", _event_onZoomRoom);
     window.addEventListener("_event_onQuery", _event_onQuery);
     window.addEventListener("_event_onGetDirections", _event_onGetDirections);
+    window.addEventListener("_event_onZoomIn", _event_onZoomIn);
+    window.addEventListener("_event_onZoomOut", _event_onZoomOut);
+    window.addEventListener("_event_onFloorUp", _event_onFloorUp);
+    window.addEventListener("_event_onFloorDown", _event_onFloorDown);
+    window.addEventListener("_event_onSetFloor", _event_onSetFloor);
+    window.addEventListener("_event_onSetDirection", _event_onSetDirection);
     offsetY = RC2.style.top;
     offsetY = offsetY.substring(0, offsetY.length - 2);
     offsetY = parseInt(offsetY);
@@ -119,6 +125,24 @@ function _event_onMouseDown(event)
 {
     MouseButton = 1;
     PreviousMousePosition = new Point(event.clientX, event.clientY - offsetY);
+    for (let i = 0; i < graph.Elements.length; i++)
+    {
+        let child = graph.Elements[i];
+        if (child.Node != null)
+        {
+            if (child.Type === "Room")
+            {
+                if (graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0)) < child.Node.TextSize)
+                {
+                    graph.Elements[i]._on_down_ = true;
+                }
+                else
+                {
+                    graph.Elements[i]._on_down_ = false;
+                }
+            }
+        }
+    }
 }
 function _event_onTouchDown(event)
 {
@@ -127,6 +151,20 @@ function _event_onTouchDown(event)
 function _event_onMouseUp(event)
 {
     MouseButton = 0;
+    for (let i = 0; i < graph.Elements.length; i++)
+    {
+        let child = graph.Elements[i];
+        if (child.Node != null)
+        {
+            if (child.Type === "Room")
+            {
+                if (graph.Elements[i]._on_down_ && (graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0)) < child.Node.TextSize))
+                {
+                    window.dispatchEvent(new CustomEvent("_event_onElementClick", { detail: { button: event.button, element: child, offsetX: event.offsetX, offsetY: event.offsetY } }));
+                }
+            }
+        }
+    }
     UpdateURL();
 }
 function _event_onTouchUp(event)
@@ -136,41 +174,68 @@ function _event_onTouchUp(event)
 function _event_onMouseMove(event)
 {
     MousePosition = new Point(event.clientX, event.clientY - offsetY);
+    _event_onUpdateColors();
+}
+function _event_onUpdateColors() 
+{
+    let run = true;
     for (let i = 0; i < graph.Elements.length; i++)
     {
         let child = graph.Elements[i];
+        run = true;
         if (child.Node != null)
         {
             if (graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0)) < child.Node.TextSize)
             {
-                child.Object.ShadeR = 0.8;
-                child.Object.ShadeG = 0.8;
-                child.Object.ShadeB = 0.8;
+                if (graph.SelectedPath && graph.SelectedPath.length > 0)
+                {
+                    if (child === graph.GetElementByNodeID(graph.SelectedPath[0].ID))
+                    {
+                        run = false;
+                        child.Object.ShadeG = 0.6;
+                    }
+                    else if (child === graph.GetElementByNodeID(graph.SelectedPath[graph.SelectedPath.length - 1].ID))
+                    {
+                        run = false;
+                        child.Object.ShadeR = 0.8;
+                    }
+                }
+                if (run)
+                {
+                    child.Object.ShadeR = 0.8;
+                    child.Object.ShadeG = 0.8;
+                    child.Object.ShadeB = 0.8;
+                }
             }
             else
             {
-                if (child.Object.ShadeR != 1)
+                if (graph.SelectedPath && graph.SelectedPath.length > 0)
+                {
+                    if (child === graph.GetElementByNodeID(graph.SelectedPath[0].ID))
+                    {
+                        run = false;
+                        child.Object.ShadeR = 146 / 255;
+                        child.Object.ShadeG = 204 / 255;
+                        child.Object.ShadeB = 065 / 255;
+                    }
+                    else if (child === graph.GetElementByNodeID(graph.SelectedPath[graph.SelectedPath.length - 1].ID))
+                    {
+                        run = false;
+                        child.Object.ShadeR = 255 / 255;
+                        child.Object.ShadeG = 157 / 255;
+                        child.Object.ShadeB = 133 / 255;
+                    }
+                }
+                if (run)
                 {
                     child.Object.ShadeR = 1;
                     child.Object.ShadeG = 1;
                     child.Object.ShadeB = 1;
                 }
             }
-        }    
+        }
     }
-    /*for (let i = 0; i < graph.Nodes.length; i++)
-    {
-        let child = graph.Nodes[i];
-        if (graph.DistanceToNode(i, new Vertex(MousePosition.X, MousePosition.Y, 0)) < 10)
-        {
-            graph.Nodes[i].Hovered = true;
-        }
-        else
-        {
-            graph.Nodes[i].Hovered = false;
-        }
-    }*/
-}
+}    
 function _event_onTouchMove(event)
 {
 
@@ -226,8 +291,99 @@ function _event_onGetDirections(event)
     {
         graph.GetPath(n1, n2);
         let directions = graph.GetDynamicDirections();
+        _event_onUpdateColors();
         console.log(directions);
     }
+}
+function _event_onZoomIn(event)
+{
+    let times = 0;
+    let i = () =>
+    {
+        setTimeout(() =>
+        {
+            ME.Camera.Location.Z -= 1;
+            times++;
+            if (times < 10)
+            {
+                i();
+            }
+        }, 10);
+    };
+    i();
+}
+function _event_onZoomOut(event)
+{
+    let times = 0;
+    let i = () =>
+    {
+        setTimeout(() =>
+        {
+            ME.Camera.Location.Z += 1;
+            times++;
+            if (times < 10)
+            {
+                i();
+            }
+        }, 10);
+    };
+    i();
+}
+function _event_onFloorUp(event)
+{
+    RenderedFloor += 1;
+    if (RenderedFloor === 4)
+    {
+        RenderedFloor = 3;
+    }
+    graph.RenderedFloor = RenderedFloor;
+    UpdateURL();
+}
+function _event_onFloorDown(event)
+{
+    RenderedFloor -= 1;
+    if (RenderedFloor === 0)
+    {
+        RenderedFloor = 1;
+    }
+    graph.RenderedFloor = RenderedFloor;
+    UpdateURL();
+}
+function _event_onSetFloor(event)
+{
+    RenderedFloor = event.detail.floor;
+    graph.RenderedFloor = RenderedFloor;
+    UpdateURL();
+}
+function _event_onSetDirection(event)
+{
+    let min = Number.MAX_SAFE_INTEGER;
+    let element = null;
+    for (let i = 0; i < graph.Elements.length; i++)
+    {
+        let child = graph.Elements[i];
+        if (child.Node != null)
+        {
+            if (child.Type === "Room")
+            {
+                let dis = graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0));
+                if (dis < min)
+                {
+                    min = dis;
+                    element = child;
+                }
+            }
+        }
+    }
+    if (event.detail.dir === "from")
+    {
+        document.getElementById("searchbar1").value = element.Name;
+    }
+    else if (event.detail.dir === "to")
+    {
+        document.getElementById("searchbar2").value = element.Name;
+        window.dispatchEvent(new CustomEvent("_event_onPostSetDirection", {}));
+    }    
 }
 function MainLoop()
 {
