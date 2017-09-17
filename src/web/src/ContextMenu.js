@@ -13,7 +13,7 @@ class ContextMenu extends Component
                 top: this.props.top,
                 borderTopLeftRadius: 0,
                 borderTopRightRadius: 0,
-            }} isOpen={true}>
+            }} isOpen={true} toggle={() => { }}>
                 <DropdownMenu style={{ width: 100 }}>
                     <DropdownItem header>Directions</DropdownItem>
                     <DropdownItem onClick={(e) =>

@@ -3,6 +3,7 @@ import { Collapse, InputGroupButton, InputGroupAddon, InputGroup, Input, Button,
 import { Icon } from 'react-fa';
 import NavigationDrawer from './NavigationDrawer';
 import DirectionsDrawer from './DirectionsDrawer';
+import InformationDrawer from './InformationDrawer';
 
 class Navigation extends Component
 {
@@ -16,6 +17,8 @@ class Navigation extends Component
         this._event_onPostQuery = this._event_onPostQuery.bind(this);
         this._event_onSearchKeyDown = this._event_onSearchKeyDown.bind(this);
         this._event_onPostSetDirection = this._event_onPostSetDirection.bind(this);
+        this._event_onShowInfo = this._event_onShowInfo.bind(this);
+        this._event_onHideInfo = this._event_onHideInfo.bind(this);
 
         this._render_BorderRadius = this._render_BorderRadius.bind(this);
         this._render_leftNavigation = this._render_leftNavigation.bind(this);
@@ -44,6 +47,8 @@ class Navigation extends Component
             }
         }, false);
         window.addEventListener("_event_onElementClick", this._event_onMenuClick);
+        window.addEventListener("_event_onShowInfo", this._event_onShowInfo);
+        window.addEventListener("_event_onHideInfo", this._event_onHideInfo);
     }
     _event_onMenuClick()
     {
@@ -68,6 +73,7 @@ class Navigation extends Component
     {
         let dirIcon;
         let pT;
+        let info = this.state.ShowInfo;
         if (!this.state.Directions)
         {
             dirIcon = this.DirectionsIconOpened;
@@ -77,13 +83,15 @@ class Navigation extends Component
         {
             dirIcon = this.DirectionsIconClosed;
             pT = this.PlaceHolderRegular;
+            info = false;
         }
         this.setState({
             Drawer: false,
             DrawerIcon: this.DrawerIconClosed,
             Directions: !this.state.Directions,
             DirectionsIcon: dirIcon,
-            PlaceHolder: pT
+            PlaceHolder: pT,
+            Info: info
         });
     }
     _event_onPostSetDirection()
@@ -91,7 +99,7 @@ class Navigation extends Component
         if (!this.state.Directions)
         {
             this._event_onDirectionsClick();
-        }    
+        }
     }
     _event_onZoomRoom(event)
     {
@@ -129,7 +137,7 @@ class Navigation extends Component
             let id = document.getElementById("dropdown:0");
             if (id)
             {
-                id.focus();               
+                id.focus();
                 this.oldText = document.getElementById("searchbar1").value;
                 document.getElementById("searchbar1").value = this.state.DropDown[0].Name;
                 let container = document.getElementById("dropdown:container1");
@@ -138,6 +146,22 @@ class Navigation extends Component
                 container.scrollTop = 0;
             }
         }
+    }
+    _event_onShowInfo(event)
+    {
+        this.setState({
+            Info: true,
+            ShowInfo: true,
+            dirArr: event.detail.dirArr
+        });
+    }
+    _event_onHideInfo(event)
+    {
+        this.setState({
+            Info: false,
+            ShowInfo: false,
+            dirArr: null
+        });
     }
     componentWillMount()
     {
@@ -148,7 +172,9 @@ class Navigation extends Component
             DirectionsIcon: this.DirectionsIconClosed,
             BorderRadius: 0,
             PlaceHolder: this.PlaceHolderRegular,
-            DropDown: []
+            DropDown: [],
+            Info: false,
+            ShowInfo: false
         });
     }
     _render_BorderRadius()
@@ -231,7 +257,7 @@ class Navigation extends Component
                         let id = document.getElementById("dropdown:" + (i + 1));
                         if (id)
                         {
-                            id.focus();       
+                            id.focus();
                             document.getElementById("searchbar1").value = this.state.DropDown[i + 1].Name;
                         }
                     }
@@ -240,7 +266,7 @@ class Navigation extends Component
                         let id = document.getElementById("dropdown:" + (i - 1));
                         if (id)
                         {
-                            id.focus();                
+                            id.focus();
                             document.getElementById("searchbar1").value = this.state.DropDown[i - 1].Name;
                         }
                         else
@@ -252,7 +278,7 @@ class Navigation extends Component
                     }
                 }}>{ this.state.DropDown[i].Name }</DropdownItem >)
             }
-            return (                
+            return (
                 <ButtonDropdown onKeyDown={(e) =>
                 {
                     if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1)
@@ -312,6 +338,9 @@ class Navigation extends Component
                 {this._render_autoDrop()}
                 <Collapse isOpen={this.state.Drawer} navbar>
                     <NavigationDrawer />
+                </Collapse>
+                <Collapse isOpen={this.state.Info} navbar>
+                    <InformationDrawer dirArr={this.state.dirArr}/>
                 </Collapse>
                 <Collapse isOpen={this.state.Directions} navbar>
                     <DirectionsDrawer />

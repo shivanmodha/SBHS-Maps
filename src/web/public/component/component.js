@@ -38,6 +38,8 @@ function Main()
     window.addEventListener("_event_onFloorDown", _event_onFloorDown);
     window.addEventListener("_event_onSetFloor", _event_onSetFloor);
     window.addEventListener("_event_onSetDirection", _event_onSetDirection);
+    window.addEventListener("_event_onHideInfo", _event_onHideInfo);
+    window.addEventListener("_event_onDirSelect", _event_onDirSelect);
     offsetY = RC2.style.top;
     offsetY = offsetY.substring(0, offsetY.length - 2);
     offsetY = parseInt(offsetY);
@@ -120,6 +122,16 @@ function Initialize()
         }
     }
     raw.send();
+}
+function ParseDir(dir)
+{
+    // Remove multiple staircase attributes
+    for (let i = 0; i < dir.length; i++)
+    {
+        
+    }
+    dir.pop(); // Delete Destination Attribute
+    return dir;
 }
 function _event_onMouseDown(event)
 {
@@ -290,9 +302,9 @@ function _event_onGetDirections(event)
     if (n1 && n2)
     {
         graph.GetPath(n1, n2);
-        let directions = graph.GetDynamicDirections();
+        let directions = ParseDir(graph.GetDynamicDirections());
         _event_onUpdateColors();
-        console.log(directions);
+        window.dispatchEvent(new CustomEvent("_event_onShowInfo", { detail: { dirArr: directions } }));
     }
 }
 function _event_onZoomIn(event)
@@ -384,6 +396,15 @@ function _event_onSetDirection(event)
         document.getElementById("searchbar2").value = element.Name;
         window.dispatchEvent(new CustomEvent("_event_onPostSetDirection", {}));
     }    
+}
+function _event_onHideInfo(event)
+{
+    graph.SelectedPath = null;
+    _event_onUpdateColors();
+}
+function _event_onDirSelect(event)
+{
+    ME.Camera.Location = new Vertex(event.detail.node.Location.X, event.detail.node.Location.Y, event.detail.node.Location.Z + 10);
 }
 function MainLoop()
 {

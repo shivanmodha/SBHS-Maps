@@ -169,7 +169,7 @@ let Graph = class Graph
         if (!this.SelectedPath[1].Name.includes(this.SelectedPath[0].Name))
         {
             start = true;
-            _return.push(new DirectionInstruction(this.SelectedPath[1].Name, "Start", dist(this.SelectedPath[0].Location, this.SelectedPath[1].Location), "Head to " + this.SelectedPath[1].Name));
+            _return.push(new DirectionInstruction(this.SelectedPath[1], "Start", dist(this.SelectedPath[0].Location, this.SelectedPath[1].Location), "Head to " + this.SelectedPath[1].Name));
         }
         for (let i = 1; i < this.SelectedPath.length - 1; i++)
         {
@@ -192,7 +192,7 @@ let Graph = class Graph
             }
             if (!start && i === 1)
             {
-                _return.push(new DirectionInstruction(child.Name, "Start", dist(current.Location, child.Location), "Head to " + child.Name));
+                _return.push(new DirectionInstruction(child, "Start", dist(current.Location, child.Location), "Head to " + child.Name));
             }
             else
             {
@@ -205,53 +205,51 @@ let Graph = class Graph
                 {
                     if ((ang > -StraightOffset) && (ang < StraightOffset))
                     {
-                        console.log(_return[_return.length - 1].NodeName + " | " + child.Name);
                         if (_return[_return.length - 1].NodeName === child.Name && _return[_return.length - 1].Direction != "Straight")
                         {
-                            _return.push(new DirectionInstruction(child.Name, "Straight", dist(current.Location, child.Location), "Keep Straight"));
+                            _return.push(new DirectionInstruction(child, "Straight", dist(current.Location, child.Location), "Keep Straight"));
                         }
                         else
                         {
                             if (i !== this.SelectedPath.length - 2)
                             {
-                                console.log(_return[_return.length - 1].NodeName + " | " + child.Name);
                                 if (_return[_return.length - 1].NodeName !== child.Name)
                                 {
-                                    //_return.push(new DirectionInstruction(child.Name, "Straight", dist(current.Location, child.Location), "Straight to " + displayName));
+                                    //_return.push(new DirectionInstruction(child, "Straight", dist(current.Location, child.Location), "Straight to " + displayName));
                                 }
                             }
                             else
                             {
                                 DestCall = true;
-                                //_return.push(new DirectionInstruction(child.Name, "Straight", dist(current.Location, child.Location), "Destination Straight Ahead"));
+                                //_return.push(new DirectionInstruction(child, "Straight", dist(current.Location, child.Location), "Destination Straight Ahead"));
                             }
                         }
                     }
                     else if (ang < -StraightOffset)
                     {
-                        _return.push(new DirectionInstruction(child.Name, "Left", dist(current.Location, child.Location), "Left " + verb + " " + displayName));
+                        _return.push(new DirectionInstruction(child, "Left", dist(current.Location, child.Location), "Left " + verb + " " + displayName));
                     }
                     else if (ang > StraightOffset)
                     {
-                        _return.push(new DirectionInstruction(child.Name, "Right", dist(current.Location, child.Location), "Right " + verb + " " + displayName));
+                        _return.push(new DirectionInstruction(child, "Right", dist(current.Location, child.Location), "Right " + verb + " " + displayName));
                     }
                 }
                 else if (current.Location.Z < child.Location.Z)
                 {
                     if (!_return[_return.length - 1].NodeName.includes(child.Name) || child.Name.includes("Stairs"))
                     {
-                        _return.push(new DirectionInstruction(child.Name, "Up", dist(current.Location, child.Location), "Up " + displayName));
+                        _return.push(new DirectionInstruction(child, "Up", dist(current.Location, child.Location), "Up " + displayName));
                     }
                 }
                 else if (current.Location.Z > child.Location.Z)
                 {
-                    _return.push(new DirectionInstruction(child.Name, "Down", dist(current.Location, child.Location), "Down " + displayName));
+                    _return.push(new DirectionInstruction(child, "Down", dist(current.Location, child.Location), "Down " + displayName));
                 }
             }
         }
         if (!DestCall)
         {
-            _return.push(new DirectionInstruction(this.SelectedPath[this.SelectedPath.length - 1].Name, "Destination", 0, "Destination"));
+            _return.push(new DirectionInstruction(this.SelectedPath[this.SelectedPath.length - 1], "Destination", 0, "Destination"));
         }
         return _return;
     }
@@ -561,9 +559,10 @@ let Element = class Element
 }
 let DirectionInstruction = class DirectionInstruction
 {
-    constructor(nodeName, direction, distance, instruction)
+    constructor(node, direction, distance, instruction)
     {
-        this.NodeName = nodeName;
+        this.NodeName = node.Name;
+        this.Node = node;
         this.Distance = distance;
         this.Direction = direction;
         this.Instruction = instruction;

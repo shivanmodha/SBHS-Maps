@@ -41,6 +41,7 @@ class DirectionsDrawer extends Component
     }
     _event_onSearchKeyDown(event)
     {
+        window.dispatchEvent(new CustomEvent("_event_onHideInfo", {}));
         this._event_onQuery();
         if (event.keyCode === 13)
         {
