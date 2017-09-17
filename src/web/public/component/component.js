@@ -124,9 +124,71 @@ function Initialize()
 }
 function ParseDir(dir)
 {
+    let mag = (a) =>
+    {
+        return Math.sqrt(Math.pow(a.X, 2) + Math.pow(a.Y, 2) + Math.pow(a.Z, 2));
+    }
+    let dist = (a, b) =>
+    {
+        return Math.sqrt(Math.pow(a.X - b.X, 2) + Math.pow(a.Y - b.Y, 2) + Math.pow(a.Z - b.Z, 2));
+    }
+    let cross = (a, b) =>
+    {
+        return new Vertex((a.Y * b.Z) - (a.Z * b.Y), (a.Z * b.X) - (a.X * b.Z), (a.X * b.Y) - (a.Y * b.X));
+    }
+    let dot = (a, b) =>
+    {
+        return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
+    }
+    let xDueZRot = Math.sin(ME.Camera.Rotation.Z * Math.PI / 180);
+    let yDueZRot = Math.cos(ME.Camera.Rotation.Z * Math.PI / 180);
+    let parent = new Vertex(dir[0].CNode.Location.X + xDueZRot, dir[0].CNode.Location.Y + yDueZRot, dir[0].CNode.Location.Z);
     for (let i = 0; i < dir.length; i++)
     {
-        
+        let current = new Vertex(dir[i].CNode.Location.X, dir[i].CNode.Location.Y, dir[i].CNode.Location.Z);
+        let child = new Vertex(dir[i].Node.Location.X, dir[i].Node.Location.Y, dir[i].Node.Location.Z);
+        let vector1 = new Vertex(current.X - parent.X, current.Y - parent.Y, 0);
+        let vector2 = new Vertex(child.X - current.X, child.Y - current.Y, 0);
+        let ang = Math.atan2(mag(cross(vector1, vector2)), dot(vector1, vector2));
+        ang *= 180 / Math.PI;
+        let StraightOffset = 15;
+        if (cross(vector1, vector2).Z < 0)
+        {
+            ang *= -1;
+        }
+        dir[i].angle = ang;
+        if (dir[i].Direction === "Right" || dir[i].Direction === "Left")
+        {
+            if (dir[i - 1].Direction === "Right")
+            {
+                dir[i].angle = dir[i - 1].angle + 90;
+            }
+            else if (dir[i - 1].Direction === "Left")
+            {
+                dir[i].angle = dir[i - 1].angle - 90;
+            }
+            else
+            {
+                dir[i].angle = dir[i - 1].angle;
+            }    
+        }
+        else if (dir[i].Direction === "Straight" || dir[i].Direction === "Destination")
+        {
+            if (dir[i - 1].Direction === "Right")
+            {
+                dir[i].angle = dir[i - 1].angle + 90;
+            }
+            else if (dir[i - 1].Direction === "Left")
+            {
+                dir[i].angle = dir[i - 1].angle - 90;
+            }
+            else
+            {
+                dir[i].angle = dir[i - 1].angle;
+            }    
+        }    
+        console.log(dir[i].CNode.Name + " to " + dir[i].Node.Name + " = " + dir[i].angle);
+        parent = current;
     }
     return dir;
 }
@@ -405,6 +467,7 @@ function _event_onDirSelect(event)
     ME.Camera.Location = new Vertex(event.detail.node.Location.X, event.detail.node.Location.Y, event.detail.node.Location.Z + 5);
     RenderedFloor = graph.GetFloor(event.detail.node) + 1;
     graph.RenderedFloor = RenderedFloor;
+    ME.Camera.Rotation.Z = event.detail.angle;
     UpdateURL();
 }
 function MainLoop()
@@ -428,7 +491,6 @@ function Update()
 function Render()
 {
     let z_rot = 0;
-    ME.Camera.Rotation.Z = 180;
     ME.Clear(clrcol[0], clrcol[1], clrcol[2], clrcol[3]);
     let scale = parseInt((Math.pow(1.0293, -ME.Camera.Location.Z + 135) + 5));
     ME.Device2D.font = scale.toString() + "px Calibri";
