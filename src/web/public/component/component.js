@@ -419,24 +419,28 @@ function Update()
     {
         DeltaMouse = new Point(PreviousMousePosition.X - MousePosition.X, PreviousMousePosition.Y - MousePosition.Y);
         PreviousMousePosition = new Point(MousePosition.X, MousePosition.Y);
-        ME.Camera.Location.X += DeltaMouse.X / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149));
-        ME.Camera.Location.Y -= DeltaMouse.Y / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149));
+        ME.Camera.Location.X -= DeltaMouse.Y / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149)) * Math.sin(ME.Camera.Rotation.Z * Math.PI / 180);
+        ME.Camera.Location.Y -= DeltaMouse.Y / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149)) * Math.cos(ME.Camera.Rotation.Z * Math.PI / 180);
+        ME.Camera.Location.X += DeltaMouse.X / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149)) * Math.cos(ME.Camera.Rotation.Z * Math.PI / 180);
+        ME.Camera.Location.Y -= DeltaMouse.X / (1236.984 * Math.pow(ME.Camera.Location.Z, -0.9845149)) * Math.sin(ME.Camera.Rotation.Z * Math.PI / 180);
     }
 }
 function Render()
 {
+    let z_rot = 0;
+    ME.Camera.Rotation.Z = 180;
     ME.Clear(clrcol[0], clrcol[1], clrcol[2], clrcol[3]);
     let scale = parseInt((Math.pow(1.0293, -ME.Camera.Location.Z + 135) + 5));
     ME.Device2D.font = scale.toString() + "px Calibri";
     graph.Scale = scale;
-    graph.Render(ME, 0);
+    graph.Render(ME, z_rot);
     if (directions)
     {
         for (let i = 0; i < directions.length; i++)
         {
             if (graph.NodeInFloor(directions[i].CNode))
             {
-                let p = ME.ProjectVertex(directions[i].CNode.Location, 0);
+                let p = ME.ProjectVertex(directions[i].CNode.Location, z_rot);
                 ME.Device2D.beginPath();
                 ME.Device2D.arc(p.X, p.Y, 5, 0, 2 * Math.PI);
                 ME.Device2D.fill();
