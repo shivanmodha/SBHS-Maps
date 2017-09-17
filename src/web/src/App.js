@@ -3,6 +3,7 @@ import Navigation from './Navigation';
 import MapComponent from './MapComponent';
 import Zoom from './Zoom';
 import ContextMenu from './ContextMenu';
+import ElementDetails from './ElementDetails';
 class App extends Component
 {
     constructor(props)
@@ -10,18 +11,13 @@ class App extends Component
         super(props);
         this._event_onElementClick = this._event_onElementClick.bind(this);
         this._render_ContextMenu = this._render_ContextMenu.bind(this);
+        window.addEventListener("_event_onElementClick", this._event_onElementClick);
     }
     _event_onElementClick(event)
     {
-        //let element = event.detail.element;	
-        if (event.detail.button === 0)
-        {
-            this.setState({
-                CM: true,
-                left: event.detail.offsetX,
-                top: event.detail.offsetY
-            });
-        }
+        this.setState({
+            element: event.detail.element
+        });
     }
     _render_ContextMenu()
     {
@@ -68,6 +64,7 @@ class App extends Component
                 <MapComponent />
                 <Navigation />
                 <Zoom />
+                <ElementDetails element={this.state.element}/>
                 {this._render_ContextMenu()}
             </div>
         );
