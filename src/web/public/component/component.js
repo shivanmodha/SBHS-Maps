@@ -39,6 +39,8 @@ function Main()
     window.addEventListener("_event_onSetDirection", _event_onSetDirection);
     window.addEventListener("_event_onHideInfo", _event_onHideInfo);
     window.addEventListener("_event_onDirSelect", _event_onDirSelect);
+    window.addEventListener("_event_onCameraRotate", _event_onCameraRotate);
+    window.addEventListener("_event_onCameraResetRotate", _event_onCameraResetRotate);
     offsetY = RC2.style.top;
     offsetY = offsetY.substring(0, offsetY.length - 2);
     offsetY = parseInt(offsetY);
@@ -434,21 +436,28 @@ function _event_onSetDirection(event)
 {
     let min = Number.MAX_SAFE_INTEGER;
     let element = null;
-    for (let i = 0; i < graph.Elements.length; i++)
+    if (!event.detail.element)
     {
-        let child = graph.Elements[i];
-        if (child.Node != null)
+        for (let i = 0; i < graph.Elements.length; i++)
         {
-            if (child.Type === "Room")
+            let child = graph.Elements[i];
+            if (child.Node != null)
             {
-                let dis = graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0));
-                if (dis < min)
+                if (child.Type === "Room")
                 {
-                    min = dis;
-                    element = child;
+                    let dis = graph.DistanceToNode(child.Node, new Vertex(MousePosition.X, MousePosition.Y, 0));
+                    if (dis < min)
+                    {
+                        min = dis;
+                        element = child;
+                    }
                 }
             }
         }
+    }
+    else
+    {
+        element = event.detail.element;
     }
     if (event.detail.dir === "from")
     {
@@ -474,6 +483,40 @@ function _event_onDirSelect(event)
     ME.Camera.Rotation.Z = event.detail.angle;
     UpdateURL();
 }
+function _event_onCameraRotate(event)
+{
+    let stop = ME.Camera.Rotation.Z + event.detail.rotate;
+    let dir = 1;
+    if (event.detail.rotate < 0)
+    {
+        dir = -1;
+    }
+    let times = 0;
+    let i = () =>
+    {
+        setTimeout(() =>
+        {
+            ME.Camera.Rotation.Z += 1 * dir;
+            times++;
+            if (dir > 0 && ME.Camera.Rotation.Z < stop && times < 365)
+            {
+                i();
+            }   
+            if (dir < 0 && ME.Camera.Rotation.Z > stop && times < 365)
+            {
+                i();
+            }
+        }, 5);
+    };
+    i();
+}
+function _event_onCameraResetRotate(event)
+{
+    if (ME.Camera.Rotation.Z !== 0)
+    {
+        _event_onCameraRotate({ detail: { rotate: -ME.Camera.Rotation.Z } });
+    }
+}    
 function MainLoop()
 {
     requestAnimFrame(MainLoop);

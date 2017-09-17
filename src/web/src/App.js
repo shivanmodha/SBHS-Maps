@@ -11,12 +11,29 @@ class App extends Component
         super(props);
         this._event_onElementClick = this._event_onElementClick.bind(this);
         this._render_ContextMenu = this._render_ContextMenu.bind(this);
+        this._event_onElementDetailRemove = this._event_onElementDetailRemove.bind(this);
         window.addEventListener("_event_onElementClick", this._event_onElementClick);
+        window.addEventListener("_event_onElementDetailRemove", this._event_onElementDetailRemove);
+    }
+    _event_onElementDetailRemove(event)
+    {
+        this.state.elements.splice(event.detail.index, 1);
+        this.setState({
+            elements: this.state.elements
+        });
     }
     _event_onElementClick(event)
     {
+        if (this.state.elements)
+        {
+            this.state.elements.push(event.detail.element);
+        }
+        else
+        {
+            this.state.elements = [event.detail.element];
+        }
         this.setState({
-            element: event.detail.element
+            elements: this.state.elements
         });
     }
     _render_ContextMenu()
@@ -64,7 +81,7 @@ class App extends Component
                 <MapComponent />
                 <Navigation />
                 <Zoom />
-                <ElementDetails element={this.state.element}/>
+                <ElementDetails elements={this.state.elements}/>
                 {this._render_ContextMenu()}
             </div>
         );

@@ -44,11 +44,11 @@ class ContextMenu extends Component
                         <div style={{ display: "inline", position: "absolute", left: 70, top: 167, margin: 0, padding: 0 }}>
                             <Button color="secondary" style={{ margin: 0, padding: 0, borderRadius: 0, border: "none", width: 40, height: 25 }} outline onClick={() =>
                             {
-                                window.dispatchEvent(new CustomEvent("_event_onFloorDown", { }));  
+                                window.dispatchEvent(new CustomEvent("_event_onFloorUp", { }));  
                             }}><Icon name="angle-down" /></Button>
                             <Button color="secondary" style={{ margin: 0, padding: 0, borderRadius: 0, border: "none", width: 40, height: 25 }} outline onClick={() =>
                             {
-                                window.dispatchEvent(new CustomEvent("_event_onFloorUp", { }));  
+                                window.dispatchEvent(new CustomEvent("_event_onFloorDown", { }));  
                             }}><Icon name="angle-up" /></Button>
                         </div>
                     </DropdownItem>
