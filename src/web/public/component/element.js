@@ -201,7 +201,7 @@ let Graph = class Graph
                 {
                     displayName = displayName.replace(" Entrance", "");
                 }
-                if (current.Location.Z === child.Location.Z)
+                if (current.Location.Z === child.Location.Z || Math.abs(current.Location.Z - child.Location.Z) < 0.25)
                 {
                     if ((ang > -StraightOffset) && (ang < StraightOffset))
                     {
@@ -215,13 +215,13 @@ let Graph = class Graph
                             {
                                 if (_return[_return.length - 1].NodeName !== child.Name)
                                 {
-                                    _return.push(new DirectionInstruction(child, "Straight", dist(current.Location, child.Location), "Straight to " + displayName, current, ang));
+                                    //_return.push(new DirectionInstruction(child, "Straight", dist(current.Location, child.Location), "Straight to " + displayName, current, ang));
                                 }
                             }
                             else
                             {
-                                DestCall = true;
-                                _return.push(new DirectionInstruction(child, "Straight", dist(current.Location, child.Location), "Destination Straight Ahead", current, ang));
+                                //DestCall = true;
+                                //_return.push(new DirectionInstruction(child, "Straight", dist(current.Location, child.Location), "Destination Straight Ahead", current, ang));
                             }
                         }
                     }
@@ -243,8 +243,11 @@ let Graph = class Graph
                 }
                 else if (current.Location.Z > child.Location.Z)
                 {
-                    _return.push(new DirectionInstruction(child, "Down", dist(current.Location, child.Location), "Down " + displayName, current, ang));
-                }
+                    if (!_return[_return.length - 1].NodeName.includes(child.Name) || child.Name.includes("Stairs"))
+                    {
+                        _return.push(new DirectionInstruction(child, "Down", dist(current.Location, child.Location), "Down " + displayName, current, ang));
+                    }
+                }    
             }
         }
         if (!DestCall)

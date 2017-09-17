@@ -140,8 +140,8 @@ function ParseDir(dir)
     {
         return (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
     }
-    let xDueZRot = Math.sin(ME.Camera.Rotation.Z * Math.PI / 180);
-    let yDueZRot = Math.cos(ME.Camera.Rotation.Z * Math.PI / 180);
+    let xDueZRot = 0; // Math.sin(ME.Camera.Rotation.Z * Math.PI / 180);
+    let yDueZRot = 1; // Math.cos(ME.Camera.Rotation.Z * Math.PI / 180);
     let parent = new Vertex(dir[0].CNode.Location.X + xDueZRot, dir[0].CNode.Location.Y + yDueZRot, dir[0].CNode.Location.Z);
     for (let i = 0; i < dir.length; i++)
     {
@@ -156,6 +156,10 @@ function ParseDir(dir)
         {
             ang *= -1;
         }
+        if (i === 0 && ang % 180 === 0)
+        {
+            ang -= 180;
+        }    
         dir[i].angle = ang;
         if (dir[i].Direction === "Right" || dir[i].Direction === "Left")
         {
@@ -172,7 +176,7 @@ function ParseDir(dir)
                 dir[i].angle = dir[i - 1].angle;
             }    
         }
-        else if (dir[i].Direction === "Straight" || dir[i].Direction === "Destination")
+        else if (dir[i].Direction === "Straight" || dir[i].Direction === "Destination" || dir[i].Direction === "Up" || dir[i].Direction === "Down")
         {
             if (dir[i - 1].Direction === "Right")
             {
