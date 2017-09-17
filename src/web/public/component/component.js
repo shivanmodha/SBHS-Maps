@@ -9,10 +9,9 @@ let MouseButton = 0;
 let offsetY = 0;
 let RC3;
 let RC2;
-
 let graph;
-
 let RenderedFloor = 1;
+let directions;
 
 function Main()
 {
@@ -125,12 +124,10 @@ function Initialize()
 }
 function ParseDir(dir)
 {
-    // Remove multiple staircase attributes
     for (let i = 0; i < dir.length; i++)
     {
         
     }
-    dir.pop(); // Delete Destination Attribute
     return dir;
 }
 function _event_onMouseDown(event)
@@ -302,7 +299,7 @@ function _event_onGetDirections(event)
     if (n1 && n2)
     {
         graph.GetPath(n1, n2);
-        let directions = ParseDir(graph.GetDynamicDirections());
+        directions = ParseDir(graph.GetDynamicDirections());
         _event_onUpdateColors();
         window.dispatchEvent(new CustomEvent("_event_onShowInfo", { detail: { dirArr: directions } }));
     }
@@ -400,11 +397,15 @@ function _event_onSetDirection(event)
 function _event_onHideInfo(event)
 {
     graph.SelectedPath = null;
+    directions = null;
     _event_onUpdateColors();
 }
 function _event_onDirSelect(event)
 {
-    ME.Camera.Location = new Vertex(event.detail.node.Location.X, event.detail.node.Location.Y, event.detail.node.Location.Z + 10);
+    ME.Camera.Location = new Vertex(event.detail.node.Location.X, event.detail.node.Location.Y, event.detail.node.Location.Z + 5);
+    RenderedFloor = graph.GetFloor(event.detail.node) + 1;
+    graph.RenderedFloor = RenderedFloor;
+    UpdateURL();
 }
 function MainLoop()
 {
@@ -429,4 +430,17 @@ function Render()
     ME.Device2D.font = scale.toString() + "px Calibri";
     graph.Scale = scale;
     graph.Render(ME, 0);
+    if (directions)
+    {
+        for (let i = 0; i < directions.length; i++)
+        {
+            if (graph.NodeInFloor(directions[i].CNode))
+            {
+                let p = ME.ProjectVertex(directions[i].CNode.Location, 0);
+                ME.Device2D.beginPath();
+                ME.Device2D.arc(p.X, p.Y, 5, 0, 2 * Math.PI);
+                ME.Device2D.fill();
+            }    
+        }
+    }
 }

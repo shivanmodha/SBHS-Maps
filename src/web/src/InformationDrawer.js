@@ -10,7 +10,7 @@ class InformationDrawer extends Component
             for (let i = 0; i < this.props.dirArr.length; i++)
             {
                 str.push(
-                    <ListGroupItem style={{ borderRadius: 0 }} className="justify-content-between" href="#" action onClick={() => { window.dispatchEvent(new CustomEvent("_event_onDirSelect", { detail: { node: this.props.dirArr[i].Node } })); }}>
+                    <ListGroupItem style={{ borderRadius: 0 }} className="justify-content-between" href="#" action onClick={() => { window.dispatchEvent(new CustomEvent("_event_onDirSelect", { detail: { node: this.props.dirArr[i].CNode } })); }}>
                         <div style={{ padding: 0, margin: 0 }}>
                             <ListGroupItemHeading style={{ padding: 0 }}>{this.props.dirArr[i].Direction}</ListGroupItemHeading>
                             <ListGroupItemText style={{ padding: 0 }}>
@@ -28,7 +28,7 @@ class InformationDrawer extends Component
                 marginTop: 5,
                 marginBottom: 0,
                 boxShadow: "1px 1px 5px rgba(0, 0, 0, 0.25)",
-                maxHeight: 300,
+                maxHeight: 285,
                 overflowX: "hidden",
                 userSelect: "none",
                 cursor: "default"
