@@ -40,9 +40,11 @@ class Navigation extends Component
                 DropDown: []
             });
         });
-        window.addEventListener("keydown", function(e) {
+        window.addEventListener("keydown", function (e)
+        {
             // space and arrow keys
-            if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+            if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1)
+            {
                 //e.preventDefault();
             }
         }, false);
@@ -176,6 +178,10 @@ class Navigation extends Component
             ShowInfo: false
         });
     }
+    componentDidMount()
+    {
+        this._event_onMenuClick();
+    }
     _render_BorderRadius()
     {
         if (this.state.Drawer || this.state.Directions)
@@ -275,7 +281,7 @@ class Navigation extends Component
                             document.getElementById("searchbar1").value = this.oldText;
                         }
                     }
-                }}>{ this.state.DropDown[i].Name }</DropdownItem >)
+                }}>{this.state.DropDown[i].Name}</DropdownItem >)
             }
             return (
                 <ButtonDropdown onKeyDown={(e) =>
@@ -339,7 +345,7 @@ class Navigation extends Component
                     <NavigationDrawer />
                 </Collapse>
                 <Collapse isOpen={this.state.Info} navbar>
-                    <InformationDrawer dirArr={this.state.dirArr}/>
+                    <InformationDrawer dirArr={this.state.dirArr} />
                 </Collapse>
                 <Collapse isOpen={this.state.Directions} navbar>
                     <DirectionsDrawer />

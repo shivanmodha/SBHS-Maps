@@ -31,7 +31,7 @@ class Zoom extends Component
                 <br />
                 <Button outline color={"warning"} style={{ height: 25, width: 25, border: "none", borderRadius: 0, padding: 0 }} onClick={() =>
                 {
-                    window.dispatchEvent(new CustomEvent("_event_onCameraRotate", { detail: { rotate: -45 } }));
+                    window.dispatchEvent(new CustomEvent("_event_onCameraRotate", { detail: { rotate: 45 } }));
                 }}>
                     <Icon style={{ marginTop: -10 }} name="undo" />
                 </Button>
@@ -43,7 +43,7 @@ class Zoom extends Component
                 </Button>
                 <Button outline color={"warning"} style={{ height: 25, width: 25, border: "none", borderRadius: 0, padding: 0 }} onClick={() =>
                 {
-                    window.dispatchEvent(new CustomEvent("_event_onCameraRotate", { detail: { rotate: 45 } }));
+                    window.dispatchEvent(new CustomEvent("_event_onCameraRotate", { detail: { rotate: -45 } }));
                 }}>
                     <Icon style={{ top: -10 }} name="repeat" />
                 </Button>
